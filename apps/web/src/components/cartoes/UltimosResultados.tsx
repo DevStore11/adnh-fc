@@ -11,7 +11,9 @@ export function UltimosResultados({ resultados }: { resultados: ResultadoRecente
         {resultados.map((jogo) => (
           <li className="resultados__linha" key={jogo.id}>
             <span className="resultados__data">{formatarDataCurta(jogo.data)}</span>
-            <span className="resultados__adversario">{jogo.adversario}</span>
+            <Link to={`/jogos/${jogo.id}`} className="resultados__adversario ligacao-cartao">
+              {jogo.adversario}
+            </Link>
             <span className="resultados__placar">{formatarPlacar(jogo.golosPro, jogo.golosContra)}</span>
             <EtiquetaResultado resultado={jogo.resultado} />
           </li>

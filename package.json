@@ -7,6 +7,7 @@
     "build": "pnpm --filter @adnh-fc/web build",
     "db:migrar:local": "pnpm --filter @adnh-fc/api exec wrangler d1 migrations apply adnh-fc-db --local",
     "db:seed:local": "pnpm --filter @adnh-fc/api exec wrangler d1 execute adnh-fc-db --local --file=../../seeds/dev.sql",
+    "admin:criar": "node scripts/admin-criar.mjs",
     "db:migrar:remoto": "pnpm --filter @adnh-fc/api exec wrangler d1 migrations apply adnh-fc-db --remote",
     "deploy": "pnpm --filter @adnh-fc/web build && pnpm --filter @adnh-fc/api exec wrangler deploy"
   }

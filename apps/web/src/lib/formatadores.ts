@@ -12,6 +12,17 @@ const ABREVIATURAS_POSICAO: Record<Posicao, string> = {
   avançado: "AVA",
 };
 
+const TITULOS_GRUPO: Record<Posicao, string> = {
+  "guarda-redes": "Guarda-redes (GR)",
+  defesa: "Defesas (DEF)",
+  médio: "Médios (MED)",
+  avançado: "Avançados (AVA)",
+};
+
+export function tituloGrupo(posicao: Posicao): string {
+  return TITULOS_GRUPO[posicao];
+}
+
 export function formatarDataLonga(iso: string): string {
   return new Intl.DateTimeFormat(LOCALE, {
     timeZone: FUSO,
@@ -84,4 +95,63 @@ export function iniciais(nome: string): string {
 
 export function abreviarPosicao(posicao: Posicao): string {
   return ABREVIATURAS_POSICAO[posicao];
+}
+
+// "25 Out 2026 · 16:12"
+export function formatarDataHora(iso: string): string {
+  const partes = new Intl.DateTimeFormat(LOCALE, {
+    timeZone: FUSO,
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date(iso));
+  const valor = (tipo: string) => partes.find((p) => p.type === tipo)?.value ?? "";
+  const mes = valor("month");
+  return `${valor("day")} ${mes.charAt(0).toUpperCase()}${mes.slice(1, 3)} ${valor("year")} · ${valor("hour")}:${valor("minute")}`;
+}
+
+// Maputo não tem horário de verão: o fuso é sempre UTC+2.
+export function maputoParaIso(valorLocal: string): string {
+  return new Date(`${valorLocal}:00+02:00`).toISOString();
+}
+
+// Valor para um <input type="datetime-local">, em hora de Maputo.
+export function isoParaMaputoLocal(iso: string): string {
+  const partes = new Intl.DateTimeFormat("en-GB", {
+    timeZone: FUSO,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date(iso));
+  const valor = (tipo: string) => partes.find((p) => p.type === tipo)?.value ?? "";
+  return `${valor("year")}-${valor("month")}-${valor("day")}T${valor("hour")}:${valor("minute")}`;
+}
+
+// "Dom, 1 Nov"
+export function formatarDataLista(iso: string): string {
+  const partes = new Intl.DateTimeFormat(LOCALE, {
+    timeZone: FUSO,
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  }).formatToParts(new Date(iso));
+  const limpo = (tipo: string) => (partes.find((p) => p.type === tipo)?.value ?? "").replace(".", "");
+  const maiuscula = (texto: string) => `${texto.charAt(0).toUpperCase()}${texto.slice(1)}`;
+  return `${maiuscula(limpo("weekday"))}, ${limpo("day")} ${maiuscula(limpo("month"))}`;
+}
+
+// "Grupo Desportivo da Matola" -> "GDM"; só conta palavras que começam por maiúscula.
+export function sigla(nome: string): string {
+  return nome
+    .split(/\s+/)
+    .filter((palavra) => /^\p{Lu}/u.test(palavra))
+    .map((palavra) => palavra.charAt(0))
+    .join("")
+    .slice(0, 3);
 }

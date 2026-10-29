@@ -1,0 +1,244 @@
+/* Painel do gestor: listas com formulário ao lado, filtros e interruptor */
+
+.painel-grade {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--esp-6);
+  align-items: start;
+}
+
+@media (min-width: 1000px) {
+  .painel-grade {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--esp-7);
+  }
+}
+
+.painel-bloco {
+  border-top: 4px solid var(--cor-texto);
+  padding-top: var(--esp-3);
+}
+
+.painel-bloco .formulario {
+  max-width: none;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-4);
+  margin-bottom: var(--esp-3);
+}
+
+.filtros .controlo {
+  min-width: 160px;
+}
+
+.controlo select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 var(--esp-3);
+  border: 1px solid var(--cor-texto-2);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  font: 400 16px var(--fonte-corpo);
+}
+
+.lista-linhas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linha {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-4);
+  min-height: 72px;
+  padding: var(--esp-2) var(--esp-2);
+  border-bottom: 1px solid var(--cor-regua);
+}
+
+.linha--seleccionada {
+  background: var(--cor-superficie);
+}
+
+.linha--inactiva .linha__nome {
+  color: var(--cor-texto-2);
+}
+
+.linha__numero {
+  flex: none;
+  width: 40px;
+  font-family: var(--fonte-titulo);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+
+.linha__foto {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 48px;
+  overflow: hidden;
+  background: var(--cor-foto);
+  color: var(--cor-texto-2);
+  font-family: var(--fonte-titulo);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.linha__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.linha__texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.linha__nome {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.linha__apoio {
+  color: var(--cor-texto-2);
+  font-size: 13px;
+}
+
+.linha__carimbos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-2);
+  margin-top: var(--esp-1);
+}
+
+.linha__data {
+  flex: none;
+  width: 88px;
+  color: var(--cor-texto-2);
+  font-size: 13px;
+}
+
+.linha__placar {
+  flex: none;
+  font-family: var(--fonte-titulo);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.segmentado {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--cor-texto-2);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+}
+
+.segmentado label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  color: var(--cor-texto);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.segmentado input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segmentado label:has(input:checked) {
+  background: var(--cor-primaria);
+  color: var(--cor-papel);
+}
+
+.segmentado label:has(input:focus-visible) {
+  outline: 2px solid var(--cor-verde-campo);
+  outline-offset: -2px;
+}
+
+.interruptor {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.interruptor input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--cor-verde-campo);
+}
+
+.aviso-conflito {
+  max-width: 640px;
+  padding: var(--esp-3) var(--esp-4);
+  border-left: 4px solid var(--cor-aviso);
+  background: var(--cor-superficie);
+}
+
+.aviso-conflito__titulo {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.aviso-conflito__texto {
+  margin-bottom: var(--esp-3);
+  color: var(--cor-texto-2);
+  font-size: 14px;
+}
+
+.foto-edicao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-4);
+  align-items: flex-start;
+}
+
+.foto-edicao__moldura {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 160px;
+  overflow: hidden;
+  background: var(--cor-foto);
+  color: var(--cor-texto-2);
+  font-size: 13px;
+}
+
+.foto-edicao__moldura img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.controlo--grupo {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.controlo .interruptor {
+  color: var(--cor-texto);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}

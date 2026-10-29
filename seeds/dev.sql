@@ -70,3 +70,7 @@ INSERT INTO match_events (match_id, player_id, tipo, minuto) VALUES
   (6, 9, 'golo', 61), (6, 7, 'assist', 61),
   (6, 10, 'golo', 78), (6, 11, 'assist', 78),
   (6, NULL, 'golo_sofrido', 84);
+
+-- Os jogos de exemplo já têm convocatória e escalação publicadas.
+UPDATE matches SET convocatoria_publicada = 1, escalacao_publicada = 1
+WHERE EXISTS (SELECT 1 FROM match_squad s WHERE s.match_id = matches.id);

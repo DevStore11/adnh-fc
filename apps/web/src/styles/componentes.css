@@ -486,7 +486,7 @@
 }
 
 .estado__texto {
-  max-width: 44ch;
+  max-width: 60ch;
   margin: var(--esp-2) 0 var(--esp-4);
   color: var(--cor-texto-2);
   font-size: 14px;
@@ -511,6 +511,116 @@
 .carregando__barra {
   height: 20px;
   background: var(--cor-foto);
+}
+
+/* Plantel */
+.plantel__titulo {
+  font-family: var(--fonte-titulo);
+  font-weight: 900;
+  font-size: 40px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.plantel__apoio {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-2);
+  font-size: 14px;
+}
+
+.plantel__grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--esp-5) var(--esp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cartao-jogador__imagem {
+  position: relative;
+  height: 168px;
+  overflow: hidden;
+}
+
+.cartao-jogador__numero {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  color: transparent;
+  font-family: var(--fonte-titulo);
+  font-weight: 900;
+  font-size: 136px;
+  line-height: 1;
+  white-space: nowrap;
+  -webkit-text-stroke: 1.5px var(--cor-texto);
+}
+
+.cartao-jogador__foto {
+  position: absolute;
+  inset: 0 0 0 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cor-foto);
+  color: var(--cor-texto-2);
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 44px;
+}
+
+.cartao-jogador__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cartao-jogador__posicao {
+  margin-top: var(--esp-4);
+  color: var(--cor-verde-campo);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cartao-jogador__nome {
+  margin-top: var(--esp-1);
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.cartao-jogador__numeros {
+  margin-top: var(--esp-1);
+  color: var(--cor-texto-2);
+  font-size: 12px;
+}
+
+.esqueleto-cartao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.esqueleto-cartao__imagem {
+  display: block;
+  width: 126px;
+  max-width: 100%;
+  height: 168px;
+  background: var(--cor-regua);
+}
+
+.esqueleto-cartao__linha {
+  display: block;
+  height: 12px;
+  width: 80%;
+  background: var(--cor-regua);
+}
+
+.esqueleto-cartao__linha--curta {
+  width: 50%;
 }
 
 /* Rodapé */
@@ -644,5 +754,18 @@
 
   .resultados__placar {
     font-size: 36px;
+  }
+
+  .plantel__titulo {
+    font-size: 56px;
+  }
+
+  .plantel__apoio {
+    font-size: 16px;
+  }
+
+  .plantel__grade {
+    grid-template-columns: repeat(auto-fill, 180px);
+    gap: var(--esp-5);
   }
 }

@@ -1,7 +1,29 @@
-import type { EstadoJogador, Formacao, Posicao } from "@adnh-fc/shared";
+import type { EstadoJogador, Formacao, Papel, Posicao, UtilizadorSessao } from "@adnh-fc/shared";
 
 export type Bindings = {
   DB: D1Database;
+  ASSETS: Fetcher;
+};
+
+export type UtilizadorAutenticado = UtilizadorSessao & { activo: boolean };
+
+export type Ambiente = {
+  Bindings: Bindings;
+  Variables: {
+    utilizador: UtilizadorAutenticado;
+    sessaoId: string;
+  };
+};
+
+export type LinhaUtilizador = {
+  id: number;
+  nome: string;
+  email: string;
+  senha_hash: string;
+  role: Papel;
+  activo: number;
+  deve_trocar_senha: number;
+  criado_em: string;
 };
 
 export type LinhaClube = {
@@ -38,6 +60,7 @@ export type LinhaJogoTerminado = {
   formacao: Formacao | null;
   mvp_player_id: number | null;
   mvp_descricao: string | null;
+  escalacao_publicada: number;
 };
 
 export type LinhaOnze = {
@@ -56,6 +79,16 @@ export type LinhaMarcador = {
   player_id: number;
   nome: string;
   minuto: number;
+};
+
+export type LinhaPlantel = {
+  id: number;
+  nome: string;
+  numero: number;
+  posicao: Posicao;
+  tem_foto: number;
+  golos: number;
+  assistencias: number;
 };
 
 export type LinhaGoloSofrido = {

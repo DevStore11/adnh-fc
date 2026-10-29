@@ -1,0 +1,319 @@
+/* Gestão do jogo: etapas, convocatória, escalação em campo, golos e fecho */
+
+.pagina-privada__titulo--jogo {
+  margin-top: var(--esp-1);
+  font-size: 40px;
+}
+
+.jogo__apoio {
+  color: var(--cor-texto-2);
+  font-size: 14px;
+}
+
+.jogo__nota {
+  margin-top: var(--esp-4);
+  padding-left: var(--esp-3);
+  border-left: 3px solid var(--cor-verde-campo);
+}
+
+.jogo__rodape {
+  margin-top: var(--esp-5);
+}
+
+.formulario__accoes--coluna {
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: var(--esp-4);
+}
+
+/* Indicador de etapas */
+.etapas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--esp-3);
+}
+
+.etapa {
+  display: block;
+  padding-top: var(--esp-2);
+  border-top: 4px solid var(--cor-regua);
+  color: var(--cor-texto-2);
+  text-decoration: none;
+}
+
+.etapa--feita {
+  border-top-color: var(--cor-verde-campo);
+}
+
+.etapa--actual {
+  border-top-color: var(--cor-texto);
+  color: var(--cor-texto);
+}
+
+.etapa__numero {
+  display: flex;
+  align-items: baseline;
+  gap: var(--esp-2);
+  font-family: var(--fonte-titulo);
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.etapa__feito {
+  color: var(--cor-verde-campo);
+  font: 600 11px var(--fonte-corpo);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.etapa__titulo {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.etapa--feita .etapa__titulo {
+  color: var(--cor-verde-campo);
+}
+
+@media (max-width: 600px) {
+  .etapa__titulo {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+}
+
+/* Convocatória */
+.convocado {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--esp-4);
+  width: 100%;
+  min-height: 56px;
+  cursor: pointer;
+}
+
+.convocado input {
+  position: absolute;
+  opacity: 0;
+}
+
+.convocado__caixa {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--cor-texto);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+}
+
+input:checked + .convocado__caixa {
+  background: var(--cor-primaria);
+}
+
+input:checked + .convocado__caixa::after {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 11px;
+  margin: 2px auto 0;
+  border: solid var(--cor-papel);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input:checked + .convocado__caixa--radio::after {
+  width: 10px;
+  height: 10px;
+  margin: 5px auto 0;
+  border: 0;
+  background: var(--cor-papel);
+  transform: none;
+}
+
+input:focus-visible + .convocado__caixa {
+  outline: 2px solid var(--cor-verde-campo);
+  outline-offset: 2px;
+}
+
+input:disabled + .convocado__caixa {
+  border-color: var(--cor-regua);
+  background: transparent;
+}
+
+.convocado__posicao {
+  margin-left: auto;
+  color: var(--cor-texto-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.linha__nome--suave {
+  color: var(--cor-texto-2);
+  font-weight: 400;
+}
+
+.linha__apoio--bloco {
+  display: block;
+}
+
+.linha__minuto {
+  flex: none;
+  width: 56px;
+  font-family: var(--fonte-titulo);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.contador {
+  font-family: var(--fonte-titulo);
+  font-size: 120px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.contador--medio {
+  margin-top: var(--esp-4);
+  font-size: 72px;
+}
+
+.contador--erro {
+  color: var(--cor-erro);
+}
+
+.contador__legenda {
+  color: var(--cor-texto-2);
+  font: 400 14px var(--fonte-corpo);
+}
+
+@media (min-width: 1000px) {
+  .painel-grade--jogo {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+
+  .painel-grade--campo {
+    grid-template-columns: minmax(0, 680px) minmax(0, 1fr);
+  }
+}
+
+.painel-grade--campo {
+  margin-top: var(--esp-4);
+}
+
+/* Escalação */
+.formacoes__botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin-top: var(--esp-1);
+}
+
+.formacao {
+  min-width: 80px;
+  min-height: 44px;
+  padding: 0 var(--esp-4);
+  border: 1px solid var(--cor-texto);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  font: 600 14px var(--fonte-corpo);
+  cursor: pointer;
+}
+
+.formacao--activa {
+  background: var(--cor-primaria);
+  color: var(--cor-papel);
+}
+
+.campo--editavel {
+  max-width: 680px;
+  user-select: none;
+}
+
+.campo__jogador--arrastavel {
+  cursor: grab;
+  touch-action: none;
+}
+
+.campo__jogador--arrastavel .campo__numero {
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+}
+
+.campo__jogador--seleccionado .campo__numero {
+  box-shadow: 0 0 0 3px var(--cor-secundaria);
+}
+
+.campo__jogador--arrastado {
+  opacity: 0.3;
+}
+
+.linha--suplente {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.linha--arrastada {
+  opacity: 0.4;
+}
+
+.fantasma {
+  position: fixed;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--cor-texto);
+  box-shadow: 0 0 0 3px var(--cor-secundaria);
+  color: var(--cor-papel);
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  font-weight: 800;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+/* Placar da etapa dos golos */
+.placar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--esp-4);
+  margin-bottom: var(--esp-5);
+  font-family: var(--fonte-titulo);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.placar__equipa {
+  font-size: 48px;
+}
+
+.placar__equipa--contra {
+  color: var(--cor-texto-2);
+}
+
+.placar__golos {
+  font-size: 88px;
+  text-align: center;
+}
+
+@media (min-width: 700px) {
+  .placar__equipa {
+    font-size: 72px;
+  }
+
+  .placar__golos {
+    font-size: 120px;
+  }
+}

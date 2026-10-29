@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { HomemDoJogo as Homem } from "@adnh-fc/shared";
 import { Secao } from "../ui/Secao";
 import { abreviarPosicao, iniciais, listarMinutos } from "../../lib/formatadores";
@@ -39,7 +40,11 @@ export function HomemDoJogo({ homem }: { homem: Homem }) {
       </div>
       <div className="homem__ficha">
         <p className="homem__posicao">{abreviarPosicao(homem.posicao)}</p>
-        <p className="homem__nome">{homem.nome}</p>
+        <p className="homem__nome">
+          <Link to={`/jogadores/${homem.id}`} className="ligacao-texto">
+            {homem.nome}
+          </Link>
+        </p>
         <p className="homem__numeros">
           Golos {homem.golos} · Assist. {homem.assistencias}
         </p>

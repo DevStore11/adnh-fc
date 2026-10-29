@@ -1,0 +1,58 @@
+/* Imagens para partilhar: cartões com pré-visualização, no painel e na página pública do jogo */
+
+.imagens__grelha {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--esp-5);
+  margin-top: var(--esp-4);
+}
+
+.cartao-imagem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  min-width: 0;
+  padding-top: var(--esp-2);
+  border-top: 4px solid var(--cor-primaria);
+}
+
+.cartao-imagem--indisponivel {
+  border-top-color: var(--cor-regua);
+}
+
+.cartao-imagem__cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+}
+
+.cartao-imagem__previa {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--cor-foto);
+  border-radius: var(--raio);
+}
+
+.cartao-imagem__accoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.cartao-imagem__formato {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-4);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.cartao-imagem__formato label {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 44px;
+}

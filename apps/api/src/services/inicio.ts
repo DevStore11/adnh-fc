@@ -29,9 +29,11 @@ function lerPosicao(texto: string | null): { x: number; y: number } | null {
 }
 
 async function montarUltimoJogo(db: D1Database, jogo: LinhaJogoTerminado): Promise<Inicio["ultimoJogo"]> {
+  // O onze inicial, a formação e os suplentes só são públicos depois de o gestor publicar a escalação.
+  const publicada = jogo.escalacao_publicada === 1;
   const [onze, suplentes, golos, sofridos, homem] = await Promise.all([
-    obterOnzeInicial(db, jogo.id),
-    obterSuplentes(db, jogo.id),
+    publicada ? obterOnzeInicial(db, jogo.id) : [],
+    publicada ? obterSuplentes(db, jogo.id) : [],
     obterMarcadores(db, jogo.id),
     obterGolosSofridos(db, jogo.id),
     jogo.mvp_player_id === null ? null : obterHomemDoJogo(db, jogo.id, jogo.mvp_player_id),
@@ -56,7 +58,7 @@ async function montarUltimoJogo(db: D1Database, jogo: LinhaJogoTerminado): Promi
     competicao: jogo.competicao,
     golosPro: jogo.golos_pro,
     golosContra: jogo.golos_contra,
-    formacao: jogo.formacao,
+    formacao: publicada ? jogo.formacao : null,
     marcadores,
     golosSofridos: sofridos.map((s) => s.minuto),
     homemDoJogo: homem

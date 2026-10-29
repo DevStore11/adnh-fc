@@ -17,6 +17,7 @@ Corre inteiro na Cloudflare: um Worker (Hono) serve a API em `/api/*` e o front-
 - `pnpm build` — build do web
 - `pnpm db:migrar:local` — aplica migrações na D1 local
 - `pnpm db:seed:local` — carrega dados de exemplo na D1 local (nunca no remoto)
+- `pnpm admin:criar` — cria o primeiro administrador na D1 local (`--remoto` para a remota); mostra a senha temporária uma única vez e recusa se já existir um admin
 - `pnpm db:migrar:remoto` — aplica migrações na D1 remota
 - `pnpm deploy` — build do web + deploy do Worker
 

@@ -37,7 +37,6 @@ export function InicioProvider({ children }: { children: ReactNode }) {
     const raiz = document.documentElement.style;
     raiz.setProperty("--cor-primaria", clube.corPrimaria);
     raiz.setProperty("--cor-secundaria", clube.corSecundaria);
-    document.title = clube.nome;
   }, [estado]);
 
   const recarregar = useCallback(() => definirTentativa((n) => n + 1), []);

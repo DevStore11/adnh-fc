@@ -9,6 +9,11 @@ import { router } from "./app/router";
 import "./styles/tema.css";
 import "./styles/global.css";
 import "./styles/componentes.css";
+import "./styles/privado.css";
+import "./styles/painel.css";
+import "./styles/jogo.css";
+import "./styles/imagens.css";
+import "./styles/publico.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

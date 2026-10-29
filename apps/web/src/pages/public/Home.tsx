@@ -7,9 +7,11 @@ import { UltimosResultados } from "../../components/cartoes/UltimosResultados";
 import { Carregando, ErroCarregar, SemDados } from "../../components/ui/Estados";
 import { Secao } from "../../components/ui/Secao";
 import { dividirNomeClube } from "../../lib/formatadores";
+import { usarMeta } from "../../lib/usar-meta";
 
 export default function Home() {
   const { estado, recarregar } = useInicio();
+  usarMeta(estado.fase === "pronto" ? estado.dados.clube.nome : null, "Resultados, plantel e estatísticas do clube.");
 
   if (estado.fase === "carregando") return <Carregando />;
   if (estado.fase === "erro") {
