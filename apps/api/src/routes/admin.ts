@@ -30,7 +30,7 @@ import { mascararIp, obterIp } from "../lib/ip";
 import { gerarHashSenha, gerarSenhaTemporaria } from "../lib/senha";
 import { exigirPapel } from "../middleware/papel";
 import { sessao } from "../middleware/sessao";
-import { ehWebpValido } from "../services/fotos";
+import { ehWebpValido, textoLimite } from "../services/fotos";
 
 export const admin = new Hono<Ambiente>();
 
@@ -162,12 +162,19 @@ admin.patch("/gestores/:id", async (c) => {
   return c.json(gestorActualizadoSchema.parse({ gestor: paraGestor(gestor), senhaTemporaria }));
 });
 
-function paraClubeAdmin(linha: { nome: string; escudo: string | null; cor_primaria: string; cor_secundaria: string }) {
+function paraClubeAdmin(linha: {
+  nome: string;
+  escudo: string | null;
+  cor_primaria: string;
+  cor_secundaria: string;
+  epoca_actual: string;
+}) {
   return clubeAdminSchema.parse({
     nome: linha.nome,
     corPrimaria: linha.cor_primaria,
     corSecundaria: linha.cor_secundaria,
     escudo: linha.escudo,
+    epoca: linha.epoca_actual,
   });
 }
 
@@ -180,23 +187,31 @@ admin.get("/clube", async (c) => {
 admin.put("/clube", async (c) => {
   const corpo = clubeAdminEntradaSchema.safeParse(await lerCorpo(c));
   if (!corpo.success) throw new HTTPException(400, { message: "Dados inválidos" });
-  const { nome, corPrimaria, corSecundaria, escudo } = corpo.data;
+  const { nome, corPrimaria, corSecundaria, escudo, epoca } = corpo.data;
   const db = c.env.DB;
 
   if (typeof escudo === "string" && !ehWebpValido(escudo, LIMITE_ESCUDO_BYTES)) {
-    throw new HTTPException(400, { message: "O escudo tem de ser uma imagem WebP até 100 KB" });
+    throw new HTTPException(400, { message: `O escudo tem de ser uma imagem WebP até ${textoLimite(LIMITE_ESCUDO_BYTES)}` });
   }
 
   const actual = await obterClubeAdmin(db);
   const escudoFinal = escudo === undefined ? (actual?.escudo ?? null) : escudo;
+  // Sem época enviada, mantém-se a actual; na primeira gravação usa-se a do ano (como em instrucaoGuardarClube).
+  const epocaFinal = epoca ?? actual?.epoca_actual ?? String(new Date().getUTCFullYear());
 
   await db.batch([
-    instrucaoGuardarClube(db, { nome, escudo: escudoFinal, corPrimaria, corSecundaria }),
+    instrucaoGuardarClube(db, { nome, escudo: escudoFinal, corPrimaria, corSecundaria, epoca }),
     instrucaoAuditoria(db, { userId: c.get("utilizador").id, accao: "clube_actualizado", entidade: "clube", ip: obterIp(c) }),
   ]);
 
   return c.json(
-    paraClubeAdmin({ nome, escudo: escudoFinal, cor_primaria: corPrimaria, cor_secundaria: corSecundaria }),
+    paraClubeAdmin({
+      nome,
+      escudo: escudoFinal,
+      cor_primaria: corPrimaria,
+      cor_secundaria: corSecundaria,
+      epoca_actual: epocaFinal,
+    }),
   );
 });
 

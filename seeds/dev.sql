@@ -30,13 +30,13 @@ INSERT INTO players (id, nome, foto, posicao, numero, estado) VALUES
   (18, 'Júlio Mondlane', NULL, 'avançado', 18, 'lesionado');
 
 INSERT INTO matches (id, adversario, data, local, competicao, golos_pro, golos_contra, estado, formacao, mvp_player_id, epoca, versao) VALUES
-  (1, 'Académica da Costa do Sol', '2026-09-20T13:30:00Z', 'Campo da Costa do Sol', 'Jornada 4 · Liga Distrital de Maputo', 2, 1, 'terminado', '4-3-3', NULL, '2026', 1),
-  (2, 'Ferroviário da Malhangalene', '2026-09-27T13:30:00Z', 'Campo do Novo Horizonte', 'Jornada 5 · Liga Distrital de Maputo', 0, 0, 'terminado', '4-3-3', NULL, '2026', 1),
-  (3, 'Sporting da Machava', '2026-10-04T13:30:00Z', 'Campo do Novo Horizonte', 'Jornada 6 · Liga Distrital de Maputo', 2, 0, 'terminado', '4-3-3', NULL, '2026', 1),
-  (4, 'Atlético do Chamanculo', '2026-10-11T13:30:00Z', 'Campo do Chamanculo', 'Jornada 7 · Liga Distrital de Maputo', 0, 2, 'terminado', '4-4-2', NULL, '2026', 1),
-  (5, 'União do Xipamanine', '2026-10-18T13:30:00Z', 'Campo do Novo Horizonte', 'Jornada 8 · Liga Distrital de Maputo', 1, 1, 'terminado', '4-3-3', NULL, '2026', 1),
-  (6, 'Desportivo da Polana', '2026-10-25T13:30:00Z', 'Campo da Polana', 'Jornada 9 · Liga Distrital de Maputo', 3, 1, 'terminado', '4-3-3', 9, '2026', 1),
-  (7, 'Grupo Desportivo da Matola', '2026-11-01T13:30:00Z', 'Campo Municipal da Matola', 'Liga Distrital de Maputo, jornada 10', NULL, NULL, 'agendado', NULL, NULL, '2026', 1);
+  (1, 'Académica da Costa do Sol', '2026-09-20T13:30:00Z', 'Campo da Costa do Sol', 'Campeonato', 2, 1, 'terminado', '4-3-3', NULL, '2026', 1),
+  (2, 'Ferroviário da Malhangalene', '2026-09-27T13:30:00Z', 'Campo do Novo Horizonte', 'Campeonato', 0, 0, 'terminado', '4-3-3', NULL, '2026', 1),
+  (3, 'Sporting da Machava', '2026-10-04T13:30:00Z', 'Campo do Novo Horizonte', 'Campeonato', 2, 0, 'terminado', '4-3-3', NULL, '2026', 1),
+  (4, 'Atlético do Chamanculo', '2026-10-11T13:30:00Z', 'Campo do Chamanculo', 'Taça', 0, 2, 'terminado', '4-4-2', NULL, '2026', 1),
+  (5, 'União do Xipamanine', '2026-10-18T13:30:00Z', 'Campo do Novo Horizonte', 'Campeonato', 1, 1, 'terminado', '4-3-3', NULL, '2026', 1),
+  (6, 'Desportivo da Polana', '2026-10-25T13:30:00Z', 'Campo da Polana', 'Campeonato', 3, 1, 'terminado', '4-3-3', 9, '2026', 1),
+  (7, 'Grupo Desportivo da Matola', '2026-11-01T13:30:00Z', 'Campo Municipal da Matola', 'Campeonato', NULL, NULL, 'agendado', NULL, NULL, '2026', 1);
 
 UPDATE matches
 SET mvp_descricao = 'Abriu o marcador aos 23'' e fechou a conta aos 61''. Eleito pelo treinador.'

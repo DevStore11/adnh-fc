@@ -36,7 +36,7 @@ import { obterIp } from "../lib/ip";
 import { exigirPapel } from "../middleware/papel";
 import { sessao } from "../middleware/sessao";
 import { painelJogo } from "./painel-jogo";
-import { ehWebpValido } from "../services/fotos";
+import { ehWebpValido, textoLimite } from "../services/fotos";
 
 export const painel = new Hono<Ambiente>();
 
@@ -174,7 +174,7 @@ painel.put("/jogadores/:id/foto", async (c) => {
   const id = lerId(c.req.param("id"));
   const corpo = fotoEntradaSchema.safeParse(await lerCorpo(c));
   if (!corpo.success || !ehWebpValido(corpo.data.foto, LIMITE_FOTO_BYTES)) {
-    throw new HTTPException(400, { message: "A foto tem de ser uma imagem WebP até 100 KB" });
+    throw new HTTPException(400, { message: `A foto tem de ser uma imagem WebP até ${textoLimite(LIMITE_FOTO_BYTES)}` });
   }
   const db = c.env.DB;
   if (!(await existeJogador(db, id))) throw new HTTPException(404, { message: "Não encontrado" });

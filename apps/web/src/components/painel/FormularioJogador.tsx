@@ -2,6 +2,8 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import {
   ESTADOS_JOGADOR,
   jogadorEntradaSchema,
+  LADO_MAXIMO_IMAGEM,
+  LIMITE_FOTO_BYTES,
   POSICOES,
   type JogadorPainel,
 } from "@adnh-fc/shared";
@@ -15,8 +17,8 @@ import {
 import { comprimirParaWebp, ErroImagem } from "../../lib/comprimir-imagem";
 import { abreviarPosicao, iniciais } from "../../lib/formatadores";
 
-const LADO_FOTO = 400;
-const BYTES_FOTO = 60 * 1024;
+const LADO_FOTO = LADO_MAXIMO_IMAGEM;
+const BYTES_FOTO = LIMITE_FOTO_BYTES;
 
 // undefined = manter a foto; null = remover; texto = nova foto em base64
 type AlteracaoFoto = string | null | undefined;
@@ -36,6 +38,7 @@ export function FormularioJogador({ jogador, aoGuardar, aoApagar, aoCancelar }: 
   const [activo, definirActivo] = useState(jogador?.activo ?? true);
   const [foto, definirFoto] = useState<AlteracaoFoto>(undefined);
   const [erro, definirErro] = useState<string | null>(null);
+  const [erroFoto, definirErroFoto] = useState<string | null>(null);
   const [aProcessar, definirAProcessar] = useState(false);
   const [aEnviar, definirAEnviar] = useState(false);
 
@@ -48,10 +51,11 @@ export function FormularioJogador({ jogador, aoGuardar, aoApagar, aoCancelar }: 
     if (!ficheiro) return;
     definirAProcessar(true);
     definirErro(null);
+    definirErroFoto(null);
     try {
       definirFoto(await comprimirParaWebp(ficheiro, LADO_FOTO, BYTES_FOTO));
     } catch (falha) {
-      definirErro(falha instanceof ErroImagem ? falha.message : "Não foi possível processar a imagem.");
+      definirErroFoto(falha instanceof ErroImagem ? falha.message : "Não foi possível processar a imagem.");
     } finally {
       definirAProcessar(false);
     }
@@ -160,7 +164,7 @@ export function FormularioJogador({ jogador, aoGuardar, aoApagar, aoCancelar }: 
               {aProcessar ? "A processar…" : "Escolher foto"}
               <input
                 type="file"
-                accept="image/png,image/jpeg,image/webp"
+                accept="image/*"
                 onChange={(evento) => void aoEscolherFoto(evento)}
                 disabled={aProcessar}
                 aria-labelledby="jogador-foto-rotulo"
@@ -170,6 +174,11 @@ export function FormularioJogador({ jogador, aoGuardar, aoApagar, aoCancelar }: 
               <button type="button" className="ligacao ligacao--botao ligacao--perigo" onClick={() => definirFoto(null)}>
                 Remover foto
               </button>
+            )}
+            {erroFoto && (
+              <p className="aviso-erro__titulo" role="alert">
+                {erroFoto}
+              </p>
             )}
             <p className="controlo__ajuda">Reduzida para {LADO_FOTO} px e convertida para WebP (até {BYTES_FOTO / 1024} KB).</p>
           </div>

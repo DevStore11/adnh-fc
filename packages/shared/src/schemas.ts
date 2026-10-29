@@ -116,6 +116,8 @@ export const plantelSchema = z.object({
 const emailSchema = z.string().trim().toLowerCase().email().max(254);
 const nomeSchema = z.string().trim().min(2).max(100);
 const dataSchema = z.string().datetime();
+// Formato de época igual para os jogos e para o clube: 2026, 2026/27 ou 2026-27
+const epocaSchema = z.string().trim().regex(/^\d{4}([/-]\d{2,4})?$/);
 
 // base64 de WebP até ao limite do escudo (a verificação dos bytes RIFF/WEBP é feita na API)
 const escudoBase64Schema = z
@@ -186,12 +188,15 @@ export const clubeAdminSchema = z.object({
   corPrimaria: corSchema,
   corSecundaria: corSchema,
   escudo: z.string().nullable(),
+  epoca: z.string(),
 });
 
 export const clubeAdminEntradaSchema = z.object({
   nome: z.string().trim().min(2).max(80),
   corPrimaria: corSchema,
   corSecundaria: corSchema,
+  // ausente = manter a actual (ou a do ano, na primeira gravação)
+  epoca: epocaSchema.optional(),
   // ausente = manter; null = remover
   escudo: escudoBase64Schema.nullable().optional(),
 });
@@ -257,8 +262,6 @@ export const fotoEntradaSchema = z.object({
     .max(Math.ceil((LIMITE_FOTO_BYTES * 4) / 3) + 4)
     .regex(/^[A-Za-z0-9+/]+={0,2}$/),
 });
-
-const epocaSchema = z.string().trim().regex(/^\d{4}([/-]\d{2,4})?$/);
 
 export const jogoPainelSchema = z.object({
   id: idSchema,

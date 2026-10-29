@@ -1,2 +1,8 @@
-# Copiar para apps/api/.dev.vars (nunca commitar o ficheiro real)
-SEGREDO_SESSAO=
+# Copiar para apps/api/.dev.vars (nunca commitar o ficheiro real).
+#
+# O código actual NÃO lê nenhum segredo de env: as sessões usam tokens aleatórios guardados
+# como hash SHA-256 e as senhas usam PBKDF2 com sal próprio por utilizador.
+# O Worker só usa os bindings DB (D1) e ASSETS, que vêm do wrangler.jsonc.
+#
+# Se um dia for preciso um segredo, acrescente-o aqui SEM valor, liste-o no README (secção "Segredos")
+# e defina-o em produção com: pnpm --filter @adnh-fc/api exec wrangler secret put NOME_DO_SEGREDO

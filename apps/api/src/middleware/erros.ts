@@ -6,7 +6,8 @@ export const tratarErro: ErrorHandler = (erro, c) => {
   if (erro instanceof HTTPException) {
     return c.json({ erro: erro.message }, erro.status);
   }
-  console.error(erro);
+  // Só o tipo e a mensagem: nunca o pedido, os cabeçalhos ou os valores que a consulta recebeu.
+  console.error("Erro interno:", erro instanceof Error ? `${erro.name}: ${erro.message}` : "desconhecido");
   return c.json({ erro: "Erro interno" }, 500);
 };
 

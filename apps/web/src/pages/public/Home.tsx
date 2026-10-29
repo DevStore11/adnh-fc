@@ -15,7 +15,12 @@ export default function Home() {
 
   if (estado.fase === "carregando") return <Carregando />;
   if (estado.fase === "erro") {
-    return estado.estadoHttp === 404 ? <SemDados /> : <ErroCarregar aoTentar={recarregar} />;
+    // 404 = o clube ainda não foi gravado no painel (a API só devolve 404 quando não há clube).
+    return estado.estadoHttp === 404 ? (
+      <SemDados titulo="Clube em configuração" texto="O clube ainda está a ser configurado. Volte em breve." />
+    ) : (
+      <ErroCarregar aoTentar={recarregar} />
+    );
   }
 
   const { clube, proximoJogo, ultimoJogo, ultimosResultados } = estado.dados;

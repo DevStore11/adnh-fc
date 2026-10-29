@@ -28,9 +28,12 @@ export const ACCOES_AUDITORIA = [
   "jogo_evento_apagado",
 ] as const;
 
-export const LIMITE_ESCUDO_BYTES = 100 * 1024;
+export const TIPO_IMAGEM_PERMITIDO = "image/webp";
+export const LADO_MAXIMO_IMAGEM = 512;
+export const LIMITE_ORIGINAL_IMAGEM_BYTES = 15 * 1024 * 1024;
+export const LIMITE_ESCUDO_BYTES = 200 * 1024;
 export const SENHA_TAMANHO_MINIMO = 10;
-export const LIMITE_FOTO_BYTES = 100 * 1024;
+export const LIMITE_FOTO_BYTES = 150 * 1024;
 export const CONVOCADOS_MINIMO = 11;
 export const CONVOCADOS_MAXIMO = 22;
 export const TITULARES = 11;
