@@ -1,0 +1,2 @@
+# Copiar para apps/api/.dev.vars (nunca commitar o ficheiro real)
+SEGREDO_SESSAO=

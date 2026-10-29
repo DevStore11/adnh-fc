@@ -1,0 +1,1 @@
+-- 0004: auditoria (registo de actividade)

@@ -1,0 +1,648 @@
+/* Cabeçalho e navegação */
+.cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3) var(--esp-5);
+  padding-top: var(--esp-4);
+  border-bottom: 1px solid var(--cor-regua);
+}
+
+.cabecalho__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  color: inherit;
+  text-decoration: none;
+}
+
+.cabecalho__escudo {
+  height: 44px;
+  width: auto;
+}
+
+.cabecalho__antetitulo {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--cor-verde-campo);
+}
+
+.cabecalho__nome {
+  display: block;
+  font-family: var(--fonte-titulo);
+  font-weight: 900;
+  font-size: 28px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* Esqueleto do cabeçalho: escudo e nome juntos, enquanto os dados do clube não chegam */
+.cabecalho__esqueleto {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.cabecalho__esqueleto-escudo {
+  width: 38px;
+  height: 44px;
+  background: var(--cor-foto);
+}
+
+.cabecalho__esqueleto-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cabecalho__esqueleto-linha {
+  display: block;
+  height: 12px;
+  width: 150px;
+  background: var(--cor-foto);
+}
+
+.cabecalho__esqueleto-linha--grande {
+  height: 28px;
+  width: 220px;
+}
+
+.nav {
+  display: flex;
+  width: 100%;
+}
+
+.nav a {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  color: var(--cor-texto-2);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.nav a[aria-current="page"] {
+  color: var(--cor-texto);
+  border-bottom-color: var(--cor-texto);
+}
+
+/* Secções e blocos */
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-6);
+  padding-top: var(--esp-5);
+}
+
+.secao {
+  border-top: 4px solid var(--cor-texto);
+  padding-top: var(--esp-3);
+}
+
+.antetitulo {
+  margin-bottom: var(--esp-4);
+  color: var(--cor-verde-campo);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.ligacao {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--cor-verde-campo);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.ligacao:hover {
+  text-decoration: underline;
+}
+
+.home-grade {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--esp-6);
+  align-items: start;
+}
+
+.home-grade__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-6);
+}
+
+/* Manchete: último resultado */
+.manchete {
+  padding: var(--esp-5) var(--esp-4);
+  border-radius: var(--raio);
+  background: var(--cor-primaria);
+  color: var(--cor-papel);
+}
+
+.manchete .antetitulo {
+  color: var(--cor-secundaria);
+}
+
+.manchete__linha {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.manchete__equipa {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.manchete__nome-linha {
+  display: block;
+}
+
+.manchete__escudo,
+.manchete__distintivo {
+  display: none;
+}
+
+.manchete__placar {
+  color: var(--cor-secundaria);
+  font-family: var(--fonte-titulo);
+  font-weight: 900;
+  font-size: 72px;
+  line-height: 0.95;
+  white-space: nowrap;
+}
+
+.manchete__marcadores {
+  margin-top: var(--esp-5);
+  padding-top: 20px;
+  border-top: 1px solid rgb(244 241 234 / 25%);
+  font-size: 15px;
+}
+
+.manchete__ligacao {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: var(--esp-4);
+  border-bottom: 2px solid var(--cor-secundaria);
+  color: var(--cor-secundaria);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/* Distintivos */
+.distintivo-adversario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border: 1px solid var(--cor-papel);
+  border-radius: var(--raio);
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 40px;
+}
+
+/* Campo táctico */
+.campo {
+  position: relative;
+  aspect-ratio: 6 / 7;
+  width: 100%;
+}
+
+.campo__linhas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--cor-texto);
+  stroke-width: 1.5;
+}
+
+.campo__linhas * {
+  vector-effect: non-scaling-stroke;
+}
+
+.campo__linhas .campo__ponto {
+  fill: var(--cor-texto);
+  stroke: none;
+}
+
+.campo__jogador {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.campo__numero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--cor-texto);
+  color: var(--cor-papel);
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.campo__nome {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.suplentes {
+  margin-top: var(--esp-4);
+  color: var(--cor-texto-2);
+  font-size: 13px;
+}
+
+/* Homem do jogo */
+.homem__topo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-4);
+}
+
+.homem__numero {
+  color: transparent;
+  font-family: var(--fonte-titulo);
+  font-weight: 900;
+  font-size: 140px;
+  line-height: 0.85;
+  -webkit-text-stroke: 1.5px var(--cor-texto);
+}
+
+.homem__foto {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 128px;
+  background: var(--cor-foto);
+  color: var(--cor-texto-2);
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 40px;
+}
+
+.homem__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.homem__texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.homem__titulo {
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.homem__descricao {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-2);
+  font-size: 14px;
+}
+
+.homem__ficha {
+  margin-top: var(--esp-4);
+}
+
+.homem__posicao {
+  color: var(--cor-verde-campo);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.homem__nome {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.homem__numeros {
+  color: var(--cor-texto-2);
+  font-size: 13px;
+}
+
+/* Próximo jogo */
+.proximo__data {
+  font-family: var(--fonte-titulo);
+  font-weight: 900;
+  font-size: 44px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.proximo__jogo {
+  margin-top: var(--esp-4);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.proximo__meta {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-2);
+  font-size: 13px;
+}
+
+/* Últimos resultados */
+.resultados {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resultados__linha {
+  display: grid;
+  grid-template-columns: 56px 1fr auto 28px;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: 64px;
+  border-bottom: 1px solid var(--cor-regua);
+}
+
+.resultados__data {
+  color: var(--cor-texto-2);
+  font-size: 12px;
+}
+
+.resultados__adversario {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.resultados__placar {
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.etiqueta-resultado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid currentcolor;
+  border-radius: var(--raio);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.etiqueta-resultado--v {
+  color: var(--cor-verde-campo);
+}
+
+.etiqueta-resultado--e {
+  color: var(--cor-texto-2);
+}
+
+.etiqueta-resultado--d {
+  color: var(--cor-erro);
+}
+
+/* Botão */
+.botao {
+  min-height: 44px;
+  padding: 0 var(--esp-5);
+  border: 0;
+  border-radius: var(--raio);
+  background: var(--cor-primaria);
+  color: var(--cor-papel);
+  font: 600 13px var(--fonte-corpo);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: box-shadow 120ms;
+}
+
+.botao:hover {
+  box-shadow: inset 0 -3px 0 var(--cor-secundaria);
+}
+
+/* Estados: carregamento, vazio e erro */
+.estado {
+  padding: var(--esp-7) 0;
+}
+
+.estado__titulo {
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 36px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.estado__texto {
+  max-width: 44ch;
+  margin: var(--esp-2) 0 var(--esp-4);
+  color: var(--cor-texto-2);
+  font-size: 14px;
+}
+
+.estado--erro {
+  padding-left: var(--esp-4);
+  border-left: 3px solid var(--cor-erro);
+}
+
+.estado--erro .antetitulo {
+  color: var(--cor-erro);
+}
+
+.carregando__linha {
+  display: grid;
+  grid-template-columns: 72px 1fr 40px;
+  gap: var(--esp-4);
+  margin-top: var(--esp-5);
+}
+
+.carregando__barra {
+  height: 20px;
+  background: var(--cor-foto);
+}
+
+/* Rodapé */
+.rodape {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-4);
+  margin-top: var(--esp-8);
+  padding: var(--esp-5) 0 var(--esp-7);
+  border-top: 1px solid var(--cor-regua);
+  color: var(--cor-texto-2);
+  font-size: 13px;
+}
+
+.rodape a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--cor-texto-2);
+}
+
+@media (min-width: 900px) {
+  .cabecalho {
+    padding-top: var(--esp-5);
+    padding-bottom: var(--esp-4);
+  }
+
+  .cabecalho__escudo {
+    height: 56px;
+  }
+
+  .cabecalho__esqueleto-escudo {
+    width: 49px;
+    height: 56px;
+  }
+
+  .cabecalho__esqueleto-linha--grande {
+    height: 36px;
+    width: 280px;
+  }
+
+  .cabecalho__nome {
+    font-size: 36px;
+  }
+
+  .nav {
+    width: auto;
+    gap: var(--esp-6);
+  }
+
+  .nav a {
+    flex: none;
+  }
+
+  .pagina {
+    gap: var(--esp-7);
+    padding-top: var(--esp-7);
+  }
+
+  .home-grade {
+    gap: var(--esp-7) var(--esp-8);
+  }
+
+  .home-grade--duas {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .home-grade__coluna {
+    gap: var(--esp-7);
+  }
+
+  .manchete {
+    padding: 56px;
+  }
+
+  .manchete__linha {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--esp-5);
+  }
+
+  .manchete__equipa {
+    font-size: 40px;
+  }
+
+  .manchete__equipa--adversario {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .manchete__escudo {
+    display: block;
+    height: 88px;
+    width: auto;
+  }
+
+  .manchete__distintivo {
+    display: inline-flex;
+  }
+
+  .manchete__placar {
+    font-size: 120px;
+  }
+
+  .homem__numero {
+    font-size: 170px;
+  }
+
+  .homem__foto {
+    width: 126px;
+    height: 168px;
+  }
+
+  .proximo__data {
+    font-size: 56px;
+  }
+
+  .resultados__linha {
+    grid-template-columns: 96px 1fr auto 28px;
+    gap: var(--esp-5);
+    min-height: 84px;
+  }
+
+  .campo__numero {
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+  }
+
+  .resultados__placar {
+    font-size: 36px;
+  }
+}

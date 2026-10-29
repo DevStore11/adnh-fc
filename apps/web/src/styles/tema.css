@@ -1,0 +1,28 @@
+:root {
+  /* cores do clube: os valores abaixo são o padrão e são substituídos pelos dados do clube */
+  --cor-primaria: #0b1f3a;
+  --cor-secundaria: #39ff14;
+
+  --cor-papel: #f4f1ea;
+  --cor-superficie: #ffffff;
+  --cor-texto: var(--cor-primaria);
+  --cor-texto-2: #55627a;
+  --cor-regua: #d9d4c7;
+  --cor-verde-campo: #0a7a32;
+  --cor-erro: #c8102e;
+  --cor-aviso: #f2c200;
+  --cor-foto: #e4e1da;
+
+  --esp-1: 4px;
+  --esp-2: 8px;
+  --esp-3: 12px;
+  --esp-4: 16px;
+  --esp-5: 24px;
+  --esp-6: 32px;
+  --esp-7: 48px;
+  --esp-8: 72px;
+  --raio: 2px;
+
+  --fonte-titulo: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --fonte-corpo: "Barlow", system-ui, sans-serif;
+}
