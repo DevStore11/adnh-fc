@@ -100,6 +100,16 @@ if ((resultado[0]?.meta?.changes ?? 0) === 0) {
   sair("Já existe um administrador. Nada foi criado.");
 }
 
+// Garante a linha do clube (id = 1) para o primeiro arranque ficar coerente. Se já existir, não altera nada.
+// Não é fatal: o administrador já foi criado e a senha tem de ser mostrada na mesma.
+const clube = executarSql(
+  `INSERT OR IGNORE INTO club (id, nome, epoca_actual)
+   VALUES (1, 'Associação Desportiva Novo Horizonte', strftime('%Y', 'now'));`,
+);
+if (clube.status !== 0) {
+  console.error("Aviso: não foi possível garantir a linha do clube. Aplique as migrações e grave o clube no painel.");
+}
+
 console.log("");
 console.log("Administrador criado.");
 console.log(`  Email:  ${email}`);
