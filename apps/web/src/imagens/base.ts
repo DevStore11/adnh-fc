@@ -48,13 +48,28 @@ export async function prepararFontes(): Promise<void> {
   await document.fonts.ready;
 }
 
-// Resolve com null se a imagem não existir ou falhar: quem desenha usa um avatar de reserva.
+const TEMPO_MAXIMO_IMAGEM_MS = 10_000;
+
+// Resolve com null se a imagem não existir, falhar ou demorar mais de 10 s: quem desenha usa um avatar de reserva.
 export function carregarImagem(url: string | null): Promise<HTMLImageElement | null> {
   if (!url) return Promise.resolve(null);
   return new Promise((resolver) => {
     const imagem = new Image();
-    imagem.onload = () => resolver(imagem);
-    imagem.onerror = () => resolver(null);
+    // Sem a parte depois de "?": a versão da foto não interessa no registo.
+    const caminho = url.split("?")[0];
+    const temporizador = window.setTimeout(() => {
+      console.warn("[imagens] tempo esgotado a carregar", caminho);
+      resolver(null);
+    }, TEMPO_MAXIMO_IMAGEM_MS);
+    imagem.onload = () => {
+      window.clearTimeout(temporizador);
+      resolver(imagem);
+    };
+    imagem.onerror = () => {
+      window.clearTimeout(temporizador);
+      console.warn("[imagens] falha a carregar", caminho);
+      resolver(null);
+    };
     imagem.src = url;
   });
 }

@@ -14,7 +14,13 @@ import { montarPlantel } from "../services/plantel";
 
 export const publico = new Hono<{ Bindings: Bindings }>();
 
-publico.use("*", limiteTaxa({ max: 60, janelaMs: 60_000 }));
+// Cada limite tem os seus contadores. As imagens (foto do jogador e escudo) têm um limite mais folgado,
+// porque uma convocatória grande pede dezenas de fotos de seguida.
+const limiteDados = limiteTaxa({ max: 60, janelaMs: 60_000 });
+const limiteImagens = limiteTaxa({ max: 300, janelaMs: 60_000 });
+const ROTA_IMAGEM = /\/(clube\/escudo|jogadores\/\d+\/foto)$/;
+
+publico.use("*", (c, next) => (ROTA_IMAGEM.test(c.req.path) ? limiteImagens(c, next) : limiteDados(c, next)));
 
 publico.get("/inicio", async (c) => {
   const inicio = await montarInicio(c.env.DB);

@@ -30,7 +30,11 @@ export function SecaoImagensPainel({ detalhe, tipos, titulo = "Imagens para part
       {estado.fase === "carregando" &&<p className="jogo__apoio">A preparar…</p>}
       {estado.fase === "erro" && (
         <div className="aviso-erro" role="alert">
-          <p className="aviso-erro__titulo">Não foi possível carregar os dados do clube.</p>
+          <p className="aviso-erro__titulo">
+            {estado.estadoHttp === 404
+              ? "O clube ainda não foi configurado. Um administrador tem de gravar os dados do clube antes de gerar imagens."
+              : "Não foi possível carregar os dados do clube."}
+          </p>
           <button type="button" className="ligacao ligacao--botao" onClick={recarregar}>
             Tentar de novo
           </button>

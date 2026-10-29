@@ -18,8 +18,18 @@ type Props = {
 type Estado =
   | { fase: "inicial" }
   | { fase: "a-gerar" }
-  | { fase: "erro" }
+  // mensagem: frase já pensada para o utilizador, ou null para usar o texto genérico
+  | { fase: "erro"; mensagem: string | null }
   | { fase: "pronta"; gerada: Gerada; pre: string };
+
+const MENSAGEM_GENERICA = "Não foi possível gerar a imagem.";
+
+// Só as mensagens que o próprio código lança (Error simples, em português) são mostradas; erros do navegador
+// (TypeError, DOMException, RangeError…) são técnicos e ficam só na consola.
+function mensagemParaUtilizador(erro: unknown): string | null {
+  if (!(erro instanceof Error) || erro.name !== "Error") return null;
+  return erro.message && erro.message !== MENSAGEM_GENERICA ? erro.message : null;
+}
 
 // A pré-visualização usa um data URL: a política de segurança do site só deixa carregar imagens 'self' e data:.
 function paraDataUrl(blob: Blob): Promise<string> {
@@ -44,8 +54,13 @@ function descarregar(gerada: Gerada): void {
 
 function podePartilhar(gerada: Gerada): File | null {
   if (typeof navigator === "undefined" || typeof navigator.canShare !== "function" || !navigator.share) return null;
-  const ficheiro = new File([gerada.blob], gerada.nome, { type: "image/png" });
-  return navigator.canShare({ files: [ficheiro] }) ? ficheiro : null;
+  // Alguns navegadores lançam em vez de devolver false: nesse caso só se oferece descarregar.
+  try {
+    const ficheiro = new File([gerada.blob], gerada.nome, { type: "image/png" });
+    return navigator.canShare({ files: [ficheiro] }) ? ficheiro : null;
+  } catch {
+    return null;
+  }
 }
 
 export function CartaoImagem({ tipo, conjunto, modo }: Props) {
@@ -66,8 +81,9 @@ export function CartaoImagem({ tipo, conjunto, modo }: Props) {
         const gerada = await gerarImagem(tipo, conjunto, formatoPlacar);
         const pre = await paraDataUrl(gerada.blob);
         if (minha === geracao.current) definirEstado({ fase: "pronta", gerada, pre });
-      } catch {
-        if (minha === geracao.current) definirEstado({ fase: "erro" });
+      } catch (erro) {
+        console.error("[imagens] falha ao gerar", tipo, erro);
+        if (minha === geracao.current) definirEstado({ fase: "erro", mensagem: mensagemParaUtilizador(erro) });
       }
     },
     [tipo, conjunto],
@@ -152,7 +168,8 @@ export function CartaoImagem({ tipo, conjunto, modo }: Props) {
       )}
       {dados && estado.fase === "erro" && (
         <div className="aviso-erro" role="alert">
-          <p className="aviso-erro__titulo">Não foi possível gerar a imagem.</p>
+          <p className="aviso-erro__titulo">{estado.mensagem ?? MENSAGEM_GENERICA}</p>
+          {estado.mensagem === null && <p className="jogo__apoio">Tente de novo; se persistir, avise o administrador.</p>}
           <button type="button" className="ligacao ligacao--botao" onClick={() => void gerar(formato)}>
             Tentar de novo
           </button>
