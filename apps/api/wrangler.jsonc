@@ -1,19 +1,37 @@
 {
-  "name": "adnh-fc",
-  "main": "src/index.ts",
-  "compatibility_date": "2026-10-01",
-  "assets": {
-    "directory": "../web/dist",
-    "binding": "ASSETS",
-    "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*", "/", "/jogadores", "/jogadores/*", "/jogos", "/jogos/*", "/estatisticas"]
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "adnh-fc-db",
-      "database_id": "PREENCHER_AO_CRIAR",
-      "migrations_dir": "../../migrations"
-    }
-  ]
+	"name": "adnh-fc",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-10-01",
+	// Sem registo de pedidos guardado na Cloudflare; os erros veem-se ao vivo com "wrangler tail".
+	"observability": {
+		"enabled": false
+	},
+	"assets": {
+		"directory": "../web/dist",
+		"binding": "ASSETS",
+		"not_found_handling": "single-page-application",
+		"run_worker_first": [
+			"/api/*",
+			"/",
+			"/jogadores",
+			"/jogadores/*",
+			"/jogos",
+			"/jogos/*",
+			"/estatisticas"
+		]
+	},
+	"d1_databases": [
+		{
+	 "binding": "DB",
+    "database_name": "adnh-fc-db",
+    "database_id": "a6f10407-b71d-4cfb-9576-525dd850ec6c",
+    "migrations_dir": "../../migrations"
+		},
+		{
+			"binding": "adnh_fc_db",
+			"database_name": "adnh-fc-db",
+			"database_id": "a6f10407-b71d-4cfb-9576-525dd850ec6c",
+			"remote": true
+		}
+	]
 }
