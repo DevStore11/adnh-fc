@@ -153,6 +153,9 @@ painelJogo.put("/:id/escalacao", async (c) => {
   const db = c.env.DB;
   const { id, detalhe, desactualizado } = await preparar(c, versao);
   if (desactualizado) return conflito(c, detalhe);
+  if (detalhe.jogo.estado === "terminado") {
+    throw new HTTPException(409, { message: "Jogo terminado: a escalação já não pode ser alterada" });
+  }
 
   const convocados = new Map(detalhe.jogadores.filter((j) => j.convocado).map((j) => [j.id, j]));
   if (![...titulares.map((t) => t.id), ...suplentes].every((jogadorId) => convocados.has(jogadorId))) {

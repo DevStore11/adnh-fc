@@ -209,6 +209,7 @@ export function ajustarEmLinhas(
 }
 
 // Desenha a imagem a cobrir o rectângulo (como object-fit: cover), alinhada ao topo para não cortar caras.
+// `focoVertical` (0 a 1, opcional): ponto da altura da imagem que fica ao centro do recorte (ex.: 0,35 para fotos de pessoas).
 export function desenharCobrir(
   ctx: CanvasRenderingContext2D,
   imagem: HTMLImageElement,
@@ -216,12 +217,16 @@ export function desenharCobrir(
   y: number,
   largura: number,
   altura: number,
+  focoVertical?: number,
 ): void {
   const escala = Math.max(largura / imagem.naturalWidth, altura / imagem.naturalHeight);
   const lw = largura / escala;
   const lh = altura / escala;
   const sx = (imagem.naturalWidth - lw) / 2;
-  const sy = Math.max(0, Math.min(imagem.naturalHeight - lh, (imagem.naturalHeight - lh) * 0.15));
+  const sy =
+    focoVertical === undefined
+      ? Math.max(0, Math.min(imagem.naturalHeight - lh, (imagem.naturalHeight - lh) * 0.15))
+      : Math.max(0, Math.min(imagem.naturalHeight - lh, focoVertical * imagem.naturalHeight - lh / 2));
   ctx.drawImage(imagem, sx, sy, lw, lh, x, y, largura, altura);
 }
 

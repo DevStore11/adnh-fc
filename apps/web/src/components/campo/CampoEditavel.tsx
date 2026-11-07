@@ -1,74 +1,66 @@
-import type { KeyboardEvent, PointerEvent as EventoPonteiro, RefObject } from "react";
-import { apelido } from "../../lib/formatadores";
+import type { Posicao } from "@adnh-fc/shared";
+import { nomeCurto } from "../../lib/formatadores";
+import { CampoLinhas, estiloDoLugar, normalizarY, PecaJogador, PecaVazia } from "./CampoOnze";
 
-export type JogadorNoEditor = { id: number; numero: number; nome: string; x: number; y: number };
+export type JogadorNoLugar = { id: number; nome: string; numero: number; fotoUrl: string | null };
 
-type Props = {
-  referencia: RefObject<HTMLDivElement>;
-  jogadores: JogadorNoEditor[];
-  seleccionadoId: number | null;
-  arrastadoId: number | null;
-  aoIniciarArrasto: (evento: EventoPonteiro, id: number) => void;
-  aoSeleccionar: (id: number) => void;
-  aoMover: (id: number, dx: number, dy: number) => void;
-  aoRetirar: (id: number) => void;
+export type LugarNoEditor = {
+  indice: number;
+  posicao: Posicao;
+  x: number;
+  y: number;
+  jogador: JogadorNoLugar | null;
 };
 
-const PASSO = 0.02;
+type Props = {
+  lugares: LugarNoEditor[];
+  // Lugar com a lista de escolha aberta
+  seleccionado: number | null;
+  // Campo escurecido por baixo da folha (telemóvel)
+  escurecido: boolean;
+  bloqueado: boolean;
+  aoAbrir: (indice: number, gatilho: HTMLButtonElement) => void;
+};
 
-// Mesmo desenho do campo público, mas com os jogadores arrastáveis (rato e toque) e movíveis com as setas.
-export function CampoEditavel({
-  referencia,
-  jogadores,
-  seleccionadoId,
-  arrastadoId,
-  aoIniciarArrasto,
-  aoSeleccionar,
-  aoMover,
-  aoRetirar,
-}: Props) {
-  function aoTeclar(evento: KeyboardEvent, id: number) {
-    const movimentos: Record<string, [number, number]> = {
-      ArrowLeft: [-PASSO, 0],
-      ArrowRight: [PASSO, 0],
-      ArrowUp: [0, -PASSO],
-      ArrowDown: [0, PASSO],
-    };
-    const movimento = movimentos[evento.key];
-    if (movimento) {
-      evento.preventDefault();
-      aoMover(id, movimento[0], movimento[1]);
-    } else if (evento.key === "Delete" || evento.key === "Backspace") {
-      evento.preventDefault();
-      aoRetirar(id);
-    }
-  }
+const ROTULO_POSICAO: Record<Posicao, string> = {
+  "guarda-redes": "Guarda-redes",
+  defesa: "Defesa",
+  médio: "Médio",
+  avançado: "Avançado",
+};
+
+// Mesmo desenho do campo público; cada lugar é um botão (coluna inteira: foto, disco e nome) que abre a lista de escolha.
+export function CampoEditavel({ lugares, seleccionado, escurecido, bloqueado, aoAbrir }: Props) {
+  const normalizar = normalizarY(lugares.map((l) => l.y));
 
   return (
-    <div className="campo campo--editavel" ref={referencia} role="group" aria-label="Campo: arraste os jogadores">
-      <svg className="campo__linhas" viewBox="0 0 600 700" aria-hidden="true" focusable="false">
-        <rect x="0.5" y="0.5" width="599" height="699" />
-        <path d="M210 0 A90 90 0 0 0 390 0" />
-        <rect x="120" y="490" width="360" height="210" />
-        <rect x="216" y="623" width="168" height="77" />
-        <circle className="campo__ponto" cx="300" cy="560" r="2.5" />
-      </svg>
-      {jogadores.map((jogador) => (
-        <div
-          key={jogador.id}
-          className={`campo__jogador campo__jogador--arrastavel${jogador.id === seleccionadoId ? " campo__jogador--seleccionado" : ""}${jogador.id === arrastadoId ? " campo__jogador--arrastado" : ""}`}
-          style={{ left: `${jogador.x * 100}%`, top: `${jogador.y * 100}%` }}
-          role="button"
-          tabIndex={0}
-          aria-label={`${jogador.nome}, número ${jogador.numero}. Setas para mover, Delete para passar a suplente.`}
-          onPointerDown={(evento) => aoIniciarArrasto(evento, jogador.id)}
-          onFocus={() => aoSeleccionar(jogador.id)}
-          onKeyDown={(evento) => aoTeclar(evento, jogador.id)}
-        >
-          <span className="campo__numero">{jogador.numero}</span>
-          <span className="campo__nome">{apelido(jogador.nome)}</span>
-        </div>
-      ))}
+    <div
+      className={`campo campo--onze campo--editavel${escurecido ? " campo--escurecido" : ""}`}
+      role="group"
+      aria-label="Campo: toque num lugar para escolher o jogador"
+    >
+      <CampoLinhas />
+      {lugares.map((lugar) => {
+        const aberto = lugar.indice === seleccionado;
+        const descricao = lugar.jogador
+          ? `${ROTULO_POSICAO[lugar.posicao]}, ${nomeCurto(lugar.jogador.nome)}`
+          : `${ROTULO_POSICAO[lugar.posicao]}, lugar vazio`;
+        return (
+          <button
+            key={lugar.indice}
+            type="button"
+            className={`onze-jogador onze-jogador--lugar${aberto ? " onze-jogador--seleccionado" : ""}`}
+            style={estiloDoLugar(lugar.x, normalizar(lugar.y))}
+            aria-label={descricao}
+            aria-haspopup="dialog"
+            aria-expanded={aberto}
+            disabled={bloqueado}
+            onClick={(evento) => aoAbrir(lugar.indice, evento.currentTarget)}
+          >
+            {lugar.jogador ? <PecaJogador jogador={lugar.jogador} /> : <PecaVazia posicao={lugar.posicao} />}
+          </button>
+        );
+      })}
     </div>
   );
 }

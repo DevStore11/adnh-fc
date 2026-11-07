@@ -33,7 +33,8 @@ type Props = {
 export function FormularioJogador({ jogador, aoGuardar, aoApagar, aoCancelar }: Props) {
   const [nome, definirNome] = useState(jogador?.nome ?? "");
   const [numero, definirNumero] = useState(jogador ? String(jogador.numero) : "");
-  const [posicao, definirPosicao] = useState<string>(jogador?.posicao ?? POSICOES[0]);
+  const [posicao, definirPosicao] = useState<string>(jogador?.posicao ?? "");
+  const [erroPosicao, definirErroPosicao] = useState<string | null>(null);
   const [estado, definirEstado] = useState<string>(jogador?.estado ?? "activo");
   const [activo, definirActivo] = useState(jogador?.activo ?? true);
   const [foto, definirFoto] = useState<AlteracaoFoto>(undefined);
@@ -66,12 +67,19 @@ export function FormularioJogador({ jogador, aoGuardar, aoApagar, aoCancelar }: 
     const dados = jogadorEntradaSchema.safeParse({
       nome,
       numero: Number(numero),
-      posicao,
+      // Sem posição escolhida, a primeira serve só para validar os restantes campos.
+      posicao: posicao || POSICOES[0],
       estado,
       activo,
     });
     if (!dados.success) {
       definirErro("Indique o nome (mínimo 2 letras) e um número de camisola entre 1 e 99.");
+      definirErroPosicao(posicao ? null : "Escolha a posição");
+      return;
+    }
+    if (!posicao) {
+      definirErro(null);
+      definirErroPosicao("Escolha a posição");
       return;
     }
 
@@ -131,12 +139,20 @@ export function FormularioJogador({ jogador, aoGuardar, aoApagar, aoCancelar }: 
                 name="jogador-posicao"
                 value={valor}
                 checked={posicao === valor}
-                onChange={() => definirPosicao(valor)}
+                onChange={() => {
+                  definirPosicao(valor);
+                  definirErroPosicao(null);
+                }}
               />
               {abreviarPosicao(valor)}
             </label>
           ))}
         </div>
+        {erroPosicao && (
+          <p className="aviso-erro__titulo" role="alert">
+            {erroPosicao}
+          </p>
+        )}
       </fieldset>
 
       <div className="controlo">

@@ -59,6 +59,8 @@ export const jogadorNoCampoSchema = z.object({
   id: idSchema,
   nome: z.string(),
   numero: z.number().int(),
+  // Opcional: o editor e a página inicial não a enviam; a página do jogo envia-a.
+  fotoUrl: z.string().nullable().optional(),
   x: fracaoSchema,
   y: fracaoSchema,
 });

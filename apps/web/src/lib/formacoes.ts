@@ -77,6 +77,69 @@ export function sugerirOnze(formacao: Formacao, convocados: JogadorDoJogo[]): Jo
   return escolhidos.slice(0, 11);
 }
 
+// Um lugar do onze: índice, posição da linha (as duas linhas de médios do 4-2-3-1 contam como médio) e coordenadas.
+export type Lugar = { indice: number; posicao: Posicao; x: number; y: number };
+
+// Jogador (id) de cada lugar, pelo índice do lugar; null = lugar vazio.
+export type OnzePorLugar = (number | null)[];
+
+// Os 11 lugares da formação, do ataque para a defesa e da esquerda para a direita.
+export function lugaresDaFormacao(formacao: Formacao): Lugar[] {
+  return [...LINHAS[formacao]]
+    .reverse()
+    .flatMap((linha) => espalhar(linha.n).map((x) => ({ posicao: linha.posicao, x, y: linha.y })))
+    .map((lugar, indice) => ({ ...lugar, indice }));
+}
+
+// Atribui cada titular ao lugar mais próximo da formação, 1 para 1: pares por ordem de distância, sem repetir
+// jogador nem lugar. Os lugares que sobrarem ficam vazios.
+export function atribuirALugares(formacao: Formacao, titulares: Titular[]): OnzePorLugar {
+  const lugares = lugaresDaFormacao(formacao);
+  const pares = titulares
+    .flatMap((t) => lugares.map((l) => ({ id: t.id, indice: l.indice, distancia: Math.hypot(t.x - l.x, t.y - l.y) })))
+    .sort((a, b) => a.distancia - b.distancia || a.indice - b.indice || a.id - b.id);
+  const onze: OnzePorLugar = lugares.map(() => null);
+  const colocados = new Set<number>();
+  for (const par of pares) {
+    if (onze[par.indice] === null && !colocados.has(par.id)) {
+      onze[par.indice] = par.id;
+      colocados.add(par.id);
+    }
+  }
+  return onze;
+}
+
+// Onze que resulta de pôr o jogador no lugar: se já estava noutro lugar, os dois trocam (o outro lugar fica vazio
+// se este estava vazio); se vinha do banco, quem ocupava o lugar passa a suplente.
+export function simularColocacao(onze: OnzePorLugar, indice: number, jogadorId: number): OnzePorLugar {
+  const novo = [...onze];
+  const origem = novo.indexOf(jogadorId);
+  const ocupante = novo[indice];
+  novo[indice] = jogadorId;
+  if (origem !== -1 && origem !== indice) novo[origem] = ocupante;
+  return novo;
+}
+
+// Regra do servidor: exactamente um guarda-redes entre os titulares. No cliente só se recusa o que a piora:
+// um jogador de campo no lugar de guarda-redes, ou um segundo guarda-redes no onze.
+export function motivoDeRecusa(
+  lugares: Lugar[],
+  antes: OnzePorLugar,
+  depois: OnzePorLugar,
+  posicaoDe: (id: number) => Posicao | undefined,
+): string | null {
+  const guardaRedes = (onze: OnzePorLugar) => onze.filter((id) => id !== null && posicaoDe(id) === "guarda-redes").length;
+  for (const lugar of lugares) {
+    const id = depois[lugar.indice];
+    if (antes[lugar.indice] !== id && lugar.posicao === "guarda-redes" && id !== null && posicaoDe(id) !== "guarda-redes") {
+      return "O guarda-redes tem de ser um guarda-redes";
+    }
+  }
+  const total = guardaRedes(depois);
+  if (total > 1 && total > guardaRedes(antes)) return "Só pode haver um guarda-redes";
+  return null;
+}
+
 // Primeiro lugar da formação (da posição do jogador, se possível) ainda livre no campo.
 export function proximoEspacoLivre(formacao: Formacao, titulares: Titular[], posicao: Posicao): { x: number; y: number } {
   const espacos = espacosDaFormacao(formacao);

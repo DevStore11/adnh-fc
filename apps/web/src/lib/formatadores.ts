@@ -84,6 +84,46 @@ export function apelido(nome: string): string {
   return palavras[palavras.length - 1] ?? nome;
 }
 
+const SUFIXOS_NOME = new Set(["jr", "junior", "filho", "neto"]);
+
+function ehSufixoNome(palavra: string): boolean {
+  const limpa = palavra
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/\./g, "");
+  return SUFIXOS_NOME.has(limpa);
+}
+
+// Posição do apelido: a última palavra que não é um sufixo (Jr, Júnior, Filho, Neto). -1 se só houver sufixos.
+function posicaoDoApelido(palavras: string[]): number {
+  for (let i = palavras.length - 1; i >= 0; i -= 1) {
+    if (!ehSufixoNome(palavras[i])) return i;
+  }
+  return -1;
+}
+
+// "Falcão Bila Jr." -> "Bila". Uma só palavra devolve essa palavra; só sufixos devolve o nome completo.
+export function nomeCurto(nome: string): string {
+  const palavras = nome.trim().split(/\s+/).filter(Boolean);
+  if (palavras.length === 0) return "";
+  if (palavras.length === 1) return palavras[0];
+  const indice = posicaoDoApelido(palavras);
+  return indice === -1 ? palavras.join(" ") : palavras[indice];
+}
+
+// "Falcão Bila Jr." -> "F. Bila". Uma só palavra devolve essa palavra; só sufixos devolve o nome completo.
+export function inicialEApelido(nome: string): string {
+  const palavras = nome.trim().split(/\s+/).filter(Boolean);
+  if (palavras.length === 0) return "";
+  if (palavras.length === 1) return palavras[0];
+  const indice = posicaoDoApelido(palavras);
+  if (indice === -1) return palavras.join(" ");
+  // O apelido é a primeira palavra (ex.: "Pedro Jr."): não há inicial separada.
+  if (indice === 0) return palavras[0];
+  return `${palavras[0].charAt(0).toLocaleUpperCase("pt-MZ")}. ${palavras[indice]}`;
+}
+
 export function iniciais(nome: string): string {
   return nome
     .split(/\s+/)
