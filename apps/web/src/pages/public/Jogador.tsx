@@ -5,6 +5,7 @@ import { obterPerfilJogador } from "../../lib/api";
 import { abreviarPosicao, dividirNomeClube, formatarDataCurta, formatarPlacar, iniciais } from "../../lib/formatadores";
 import { usarMeta } from "../../lib/usar-meta";
 import { usarPedido } from "../../lib/usar-pedido";
+import { SeloNumero } from "../../components/ui/SeloNumero";
 
 const NOMES_POSICAO = {
   "guarda-redes": "Guarda-redes",
@@ -54,9 +55,6 @@ export default function Jogador() {
         </Link>
         <div className="perfil__topo">
           <div className="perfil__foto">
-            <span className="perfil__numero" aria-hidden="true">
-              {jogador.numero}
-            </span>
             {jogador.fotoUrl ? (
               <img src={jogador.fotoUrl} alt={jogador.nome} width={168} height={224} />
             ) : (
@@ -64,6 +62,7 @@ export default function Jogador() {
                 {iniciais(jogador.nome)}
               </span>
             )}
+            <SeloNumero numero={jogador.numero} />
           </div>
           <div>
             <p className="antetitulo">

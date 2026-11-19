@@ -78,7 +78,7 @@ const dados = contagem.status === 0 ? lerJson(contagem.stdout) : null;
 if (!dados) {
   sair(
     "Não foi possível consultar a tabela de utilizadores. Aplique primeiro as migrações " +
-      `(${REMOTO ? "pnpm db:migrar:remoto" : "pnpm db:migrar:local"}) e tente de novo.`,
+      `(${"pnpm db:migrar:remoto"}) e tente de novo.`,
   );
 }
 if ((dados[0]?.results?.[0]?.total ?? 0) > 0) {

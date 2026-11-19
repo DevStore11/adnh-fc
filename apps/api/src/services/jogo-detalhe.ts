@@ -1,3 +1,4 @@
+import { obterVersaoImagemConvocados } from "../db/queries/imagem-convocados";
 import { jogoDetalheSchema, type JogoDetalhe } from "@adnh-fc/shared";
 import {
   listarEventos,
@@ -20,10 +21,11 @@ function lerPosicao(texto: string | null): { x: number; y: number } | null {
 export async function montarDetalhe(db: D1Database, id: number): Promise<JogoDetalhe | null> {
   const jogo = await obterJogoCompleto(db, id);
   if (!jogo) return null;
-  const [jogadores, eventos, clube] = await Promise.all([
+  const [jogadores, eventos, clube, versaoImagem] = await Promise.all([
     listarJogadoresDoJogo(db, id),
     listarEventos(db, id),
     obterNomeClube(db),
+    obterVersaoImagemConvocados(db, id),
   ]);
 
   return jogoDetalheSchema.parse({
@@ -44,6 +46,7 @@ export async function montarDetalhe(db: D1Database, id: number): Promise<JogoDet
       mvpDescricao: jogo.mvp_descricao,
       convocatoriaPublicada: jogo.convocatoria_publicada === 1,
       escalacaoPublicada: jogo.escalacao_publicada === 1,
+      convocadosImagemPublicada: versaoImagem !== null,
     },
     jogadores: jogadores.map((j) => {
       const posicao = lerPosicao(j.posicao_campo);

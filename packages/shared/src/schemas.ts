@@ -7,6 +7,7 @@ import {
   FORMACOES,
   LIMITE_ESCUDO_BYTES,
   LIMITE_FOTO_BYTES,
+  LIMITE_IMAGEM_CONVOCADOS_BYTES,
   PAPEIS,
   POSICOES,
   SENHA_TAMANHO_MINIMO,
@@ -59,7 +60,7 @@ export const jogadorNoCampoSchema = z.object({
   id: idSchema,
   nome: z.string(),
   numero: z.number().int(),
-  // Opcional: o editor e a página inicial não a enviam; a página do jogo envia-a.
+  // Opcional: o editor não a envia; a página inicial e a página do jogo enviam-na.
   fotoUrl: z.string().nullable().optional(),
   x: fracaoSchema,
   y: fracaoSchema,
@@ -91,9 +92,17 @@ export const resultadoRecenteSchema = z.object({
   resultado: resultadoSchema,
 });
 
+export const melhorMarcadorSchema = z.object({
+  id: idSchema,
+  nome: z.string(),
+  golos: z.number().int().positive(),
+  assistencias: z.number().int().nonnegative(),
+});
+
 export const inicioSchema = z.object({
   clube: clubePublicoSchema,
   proximoJogo: proximoJogoSchema.nullable(),
+  melhoresMarcadores: z.array(melhorMarcadorSchema),
   ultimoJogo: ultimoJogoSchema.nullable(),
   ultimosResultados: z.array(resultadoRecenteSchema),
 });
@@ -265,6 +274,19 @@ export const fotoEntradaSchema = z.object({
     .regex(/^[A-Za-z0-9+/]+={0,2}$/),
 });
 
+// Escudo do adversário: escudo = null remove-o
+export const escudoAdversarioEntradaSchema = z.object({
+  nome: z.string().trim().min(1).max(80),
+  escudo: escudoBase64Schema.nullable(),
+});
+
+export const imagemConvocadosEntradaSchema = z.object({
+  imagem: z
+    .string()
+    .max(Math.ceil((LIMITE_IMAGEM_CONVOCADOS_BYTES * 4) / 3) + 4)
+    .regex(/^[A-Za-z0-9+/]+={0,2}$/),
+});
+
 export const jogoPainelSchema = z.object({
   id: idSchema,
   adversario: z.string(),
@@ -320,6 +342,7 @@ export const jogoDetalheSchema = z.object({
     mvpDescricao: z.string().nullable(),
     convocatoriaPublicada: z.boolean(),
     escalacaoPublicada: z.boolean(),
+    convocadosImagemPublicada: z.boolean(),
   }),
   jogadores: z.array(
     z.object({
@@ -371,6 +394,8 @@ export const jogoPublicoSchema = z.object({
     golosContra: z.number().int().nullable(),
   }),
   convocados: z.array(jogadorPublicoSchema).nullable(),
+  // Imagem dos convocados publicada pelo gestor; null se não houver
+  convocadosImagemUrl: z.string().nullable(),
   onze: z
     .object({
       formacao: formacaoSchema,

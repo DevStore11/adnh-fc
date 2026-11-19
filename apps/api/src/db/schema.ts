@@ -68,6 +68,7 @@ export type LinhaOnze = {
   nome: string;
   numero: number;
   posicao_campo: string | null;
+  foto_versao: string | null;
 };
 
 export type LinhaSuplente = {
@@ -87,6 +88,13 @@ export type LinhaPlantel = {
   numero: number;
   posicao: Posicao;
   tem_foto: number;
+  golos: number;
+  assistencias: number;
+};
+
+export type LinhaMelhorMarcador = {
+  id: number;
+  nome: string;
   golos: number;
   assistencias: number;
 };

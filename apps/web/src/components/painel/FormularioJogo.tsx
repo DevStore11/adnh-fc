@@ -1,6 +1,13 @@
-import { useState, type FormEvent } from "react";
-import { conflitoJogoSchema, jogoEntradaSchema, type JogoPainel } from "@adnh-fc/shared";
-import { actualizarJogo, criarJogo, ErroApi } from "../../lib/api";
+import { useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  conflitoJogoSchema,
+  jogoEntradaSchema,
+  LADO_MAXIMO_IMAGEM,
+  LIMITE_ESCUDO_BYTES,
+  type JogoPainel,
+} from "@adnh-fc/shared";
+import { actualizarJogo, criarJogo, ErroApi, guardarEscudoAdversario, urlEscudoAdversario } from "../../lib/api";
+import { comprimirParaWebp, ErroImagem } from "../../lib/comprimir-imagem";
 import { isoParaMaputoLocal, maputoParaIso } from "../../lib/formatadores";
 
 type Props = {
@@ -22,6 +29,30 @@ export function FormularioJogo({ jogo, epocaPorOmissao, aoGuardar, aoConflito, a
   const [erro, definirErro] = useState<string | null>(null);
   const [conflito, definirConflito] = useState<JogoPainel | null>(null);
   const [aEnviar, definirAEnviar] = useState(false);
+  // undefined = não mexer; null = remover; texto = novo escudo do adversário em base64
+  const [escudo, definirEscudo] = useState<string | null | undefined>(undefined);
+  const [escudoAusente, definirEscudoAusente] = useState(false);
+  const [aProcessar, definirAProcessar] = useState(false);
+
+  async function aoEscolherEscudo(evento: ChangeEvent<HTMLInputElement>) {
+    const ficheiro = evento.target.files?.[0];
+    evento.target.value = "";
+    if (!ficheiro) return;
+    definirAProcessar(true);
+    definirErro(null);
+    try {
+      definirEscudo(await comprimirParaWebp(ficheiro, LADO_MAXIMO_IMAGEM, LIMITE_ESCUDO_BYTES));
+    } catch (falha) {
+      definirErro(falha instanceof ErroImagem ? falha.message : "Não foi possível processar a imagem.");
+    } finally {
+      definirAProcessar(false);
+    }
+  }
+
+  // Pré-visualização: o escudo novo; ou, num jogo já guardado com o mesmo nome, o que está no site.
+  const mesmoAdversario = jogo !== null && adversario.trim() === jogo.adversario.trim();
+  const previa =
+    escudo === null ? null : escudo ? `data:image/webp;base64,${escudo}` : mesmoAdversario && !escudoAusente ? urlEscudoAdversario(adversario) : null;
 
   async function aoSubmeter(evento: FormEvent) {
     evento.preventDefault();
@@ -45,6 +76,7 @@ export function FormularioJogo({ jogo, epocaPorOmissao, aoGuardar, aoConflito, a
     definirErro(null);
     definirConflito(null);
     try {
+      if (escudo !== undefined) await guardarEscudoAdversario({ nome: dados.data.adversario, escudo });
       const resultado = jogo
         ? await actualizarJogo(jogo.id, { ...dados.data, versao: jogo.versao })
         : await criarJogo(dados.data);
@@ -91,6 +123,40 @@ export function FormularioJogo({ jogo, epocaPorOmissao, aoGuardar, aoConflito, a
         <input id="jogo-adversario" value={adversario} onChange={(e) => definirAdversario(e.target.value)} maxLength={80} required />
       </div>
       <div className="controlo">
+        <span className="controlo__rotulo" id="jogo-escudo-rotulo">
+          Escudo do adversário (opcional)
+        </span>
+        <div className="escudo-edicao">
+          <div className="escudo-edicao__moldura">
+            {previa ? (
+              <img src={previa} alt="Escudo do adversário" onError={() => definirEscudoAusente(true)} />
+            ) : (
+              <span>Sem escudo</span>
+            )}
+          </div>
+          <div className="escudo-edicao__accoes">
+            <label className="botao botao--secundario botao--ficheiro">
+              {aProcessar ? "A processar…" : "Escolher imagem"}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(evento) => void aoEscolherEscudo(evento)}
+                disabled={aProcessar}
+                aria-labelledby="jogo-escudo-rotulo"
+              />
+            </label>
+            {previa && (
+              <button type="button" className="ligacao ligacao--botao ligacao--perigo" onClick={() => definirEscudo(null)}>
+                Remover escudo
+              </button>
+            )}
+            <p className="controlo__ajuda">
+              Fica guardado para todos os jogos contra este adversário (pelo nome).
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="controlo">
         <label htmlFor="jogo-data">Data e hora (hora de Maputo)</label>
         <input id="jogo-data" type="datetime-local" value={dataLocal} onChange={(e) => definirDataLocal(e.target.value)} required />
       </div>
@@ -108,7 +174,7 @@ export function FormularioJogo({ jogo, epocaPorOmissao, aoGuardar, aoConflito, a
       </div>
 
       <div className="formulario__accoes">
-        <button type="submit" className="botao" disabled={aEnviar}>
+        <button type="submit" className="botao" disabled={aEnviar || aProcessar}>
           {aEnviar ? "A guardar…" : jogo ? "Guardar" : "Criar jogo"}
         </button>
         {jogo?.estado === "agendado" && (

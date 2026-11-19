@@ -73,13 +73,34 @@ function Cabecalho() {
 }
 
 function Rodape() {
+  const { estado } = useInicio();
+  const clube = estado.fase === "pronto" ? estado.dados.clube : null;
+  const nome = dividirNomeClube(clube?.nome ?? "ADNH-FC");
+
   return (
     <footer className="rodape">
-      <div>
-        <p>A.D. Novo Horizonte · Maputo, Moçambique</p>
-        <p>Página pública do clube · /c/novo-horizonte</p>
+      <div className="rodape__topo">
+        <Link to="/" className="rodape__marca">
+          <Escudo url={clube?.escudoUrl ?? null} className="rodape__escudo" />
+          <span>
+            {nome.prefixo && <span className="rodape__antetitulo">{nome.prefixo}</span>}
+            <span className="rodape__nome">{nome.principal}</span>
+          </span>
+        </Link>
+        <nav className="rodape__nav" aria-label="Rodapé">
+          <Link to="/">Início</Link>
+          <Link to="/jogadores">Plantel</Link>
+          <Link to="/jogos">Jogos</Link>
+          <Link to="/estatisticas">Estatísticas</Link>
+        </nav>
       </div>
-      <Link to="/entrar">Entrar</Link>
+      <div className="rodape__base">
+        <div>
+          <p>A.D. Novo Horizonte · Maputo, Moçambique</p>
+          <p>Página pública do clube · /c/novo-horizonte</p>
+        </div>
+        <Link to="/entrar">Entrar</Link>
+      </div>
     </footer>
   );
 }

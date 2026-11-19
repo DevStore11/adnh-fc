@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { JogoListaPublico } from "@adnh-fc/shared";
+import { DistintivoAdversario } from "./DistintivoAdversario";
 import { EtiquetaResultado } from "./EtiquetaResultado";
 import { formatarDataCurta, formatarHora, formatarPlacar } from "../../lib/formatadores";
 
@@ -11,6 +12,7 @@ export function LinhaJogo({ jogo }: { jogo: JogoListaPublico }) {
       <span className="jogos__data">{formatarDataCurta(jogo.data)}</span>
       <span className="jogos__texto">
         <Link to={`/jogos/${jogo.id}`} className="jogos__adversario">
+          <DistintivoAdversario nome={jogo.adversario} pequeno />
           {jogo.adversario}
         </Link>
         <span className="jogos__apoio">

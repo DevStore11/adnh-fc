@@ -1,15 +1,8 @@
 import { Link } from "react-router-dom";
 import type { HomemDoJogo as Homem } from "@adnh-fc/shared";
 import { Secao } from "../ui/Secao";
+import { SeloNumero } from "../ui/SeloNumero";
 import { abreviarPosicao, iniciais, listarMinutos } from "../../lib/formatadores";
-
-function tituloDe(homem: Homem): string {
-  if (homem.golos > 0) return `${homem.golos} ${homem.golos === 1 ? "golo" : "golos"}`;
-  if (homem.assistencias > 0) {
-    return `${homem.assistencias} ${homem.assistencias === 1 ? "assistência" : "assistências"}`;
-  }
-  return homem.nome;
-}
 
 function descricaoDe(homem: Homem): string {
   if (homem.descricao) return homem.descricao;
@@ -23,31 +16,36 @@ export function HomemDoJogo({ homem }: { homem: Homem }) {
   return (
     <Secao antetitulo="Homem do jogo">
       <div className="homem__topo">
-        <span className="homem__numero" aria-hidden="true">
-          {homem.numero}
-        </span>
-        <div className="homem__foto">
-          {homem.fotoUrl ? (
-            <img src={homem.fotoUrl} alt={homem.nome} width={126} height={168} loading="lazy" />
-          ) : (
-            <span aria-hidden="true">{iniciais(homem.nome)}</span>
-          )}
+        <div className="homem__cromo">
+          <div className="homem__foto">
+            {homem.fotoUrl ? (
+              <img src={homem.fotoUrl} alt={homem.nome} width={180} height={168} loading="lazy" />
+            ) : (
+              <span aria-hidden="true">{iniciais(homem.nome)}</span>
+            )}
+            <SeloNumero numero={homem.numero} />
+          </div>
+          <p className="homem__posicao">{abreviarPosicao(homem.posicao)}</p>
+          <p className="homem__nome">
+            <span className="so-leitores">Número {homem.numero}, </span>
+            <Link to={`/jogadores/${homem.id}`} className="ligacao-texto">
+              {homem.nome}
+            </Link>
+          </p>
         </div>
         <div className="homem__texto">
-          <h3 className="homem__titulo">{tituloDe(homem)}</h3>
+          <dl className="homem__estatisticas">
+            <div className="homem__estatistica">
+              <dt className="homem__rotulo homem__rotulo--golos">{homem.golos === 1 ? "Golo" : "Golos"}</dt>
+              <dd className="homem__valor">{homem.golos}</dd>
+            </div>
+            <div className="homem__estatistica">
+              <dt className="homem__rotulo">Assist.</dt>
+              <dd className="homem__valor">{homem.assistencias}</dd>
+            </div>
+          </dl>
           <p className="homem__descricao">{descricaoDe(homem)}</p>
         </div>
-      </div>
-      <div className="homem__ficha">
-        <p className="homem__posicao">{abreviarPosicao(homem.posicao)}</p>
-        <p className="homem__nome">
-          <Link to={`/jogadores/${homem.id}`} className="ligacao-texto">
-            {homem.nome}
-          </Link>
-        </p>
-        <p className="homem__numeros">
-          Golos {homem.golos} · Assist. {homem.assistencias}
-        </p>
       </div>
     </Secao>
   );

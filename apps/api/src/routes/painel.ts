@@ -6,6 +6,8 @@ import {
   jogadorEntradaSchema,
   jogadoresConsultaSchema,
   jogadoresPainelSchema,
+  escudoAdversarioEntradaSchema,
+  LIMITE_ESCUDO_BYTES,
   jogadorPainelSchema,
   jogoActualizarSchema,
   jogoEntradaSchema,
@@ -30,7 +32,9 @@ import {
   obterJogoPainel,
   type LinhaJogoPainel,
 } from "../db/queries/jogos-painel";
+import { instrucaoGuardarEscudoAdversario, instrucaoRemoverEscudoAdversario } from "../db/queries/escudo-adversario";
 import type { Ambiente } from "../db/schema";
+import { chaveAdversario } from "../lib/adversario";
 import { instrucaoAuditoria } from "../lib/auditoria";
 import { obterIp } from "../lib/ip";
 import { exigirPapel } from "../middleware/papel";
@@ -66,6 +70,26 @@ function auditar(c: Context<Ambiente>, accao: AccaoAuditoria, entidade: "jogador
 
 // Gestão de um jogo (convocatória, escalação, resultado, eventos)
 painel.route("/jogos", painelJogo);
+
+// Escudo do adversário (partilhado por todos os jogos contra a mesma equipa)
+painel.put("/adversarios/escudo", async (c) => {
+  const corpo = escudoAdversarioEntradaSchema.safeParse(await lerCorpo(c));
+  if (!corpo.success) throw new HTTPException(400, { message: "Dados inválidos" });
+  const { nome, escudo } = corpo.data;
+  const chave = chaveAdversario(nome);
+  if (!chave) throw new HTTPException(400, { message: "Dados inválidos" });
+  const db = c.env.DB;
+
+  if (escudo === null) {
+    await instrucaoRemoverEscudoAdversario(db, chave).run();
+    return c.json({ ok: true, temEscudo: false });
+  }
+  if (!ehWebpValido(escudo, LIMITE_ESCUDO_BYTES)) {
+    throw new HTTPException(400, { message: `O escudo tem de ser uma imagem WebP até ${textoLimite(LIMITE_ESCUDO_BYTES)}` });
+  }
+  await instrucaoGuardarEscudoAdversario(db, chave, nome.trim(), escudo).run();
+  return c.json({ ok: true, temEscudo: true });
+});
 
 // Jogadores
 

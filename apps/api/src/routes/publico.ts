@@ -1,6 +1,9 @@
 import { Hono } from "hono";
 import { jogosPublicosConsultaSchema, jogosPublicosSchema, estatisticasSchema, jogadorPerfilSchema, inicioSchema, plantelSchema } from "@adnh-fc/shared";
+import { obterEscudoAdversario } from "../db/queries/escudo-adversario";
 import { obterEscudoClube } from "../db/queries/escudo-clube";
+import { obterImagemConvocados } from "../db/queries/imagem-convocados";
+import { chaveAdversario } from "../lib/adversario";
 import { obterFotoJogador } from "../db/queries/foto-jogador";
 import type { Bindings } from "../db/schema";
 import { limiteTaxa } from "../middleware/rate-limit";
@@ -18,7 +21,7 @@ export const publico = new Hono<{ Bindings: Bindings }>();
 // porque uma convocatória grande pede dezenas de fotos de seguida.
 const limiteDados = limiteTaxa({ max: 60, janelaMs: 60_000 });
 const limiteImagens = limiteTaxa({ max: 300, janelaMs: 60_000 });
-const ROTA_IMAGEM = /\/(clube\/escudo|jogadores\/\d+\/foto)$/;
+const ROTA_IMAGEM = /\/(clube\/escudo|adversarios\/escudo|jogadores\/\d+\/foto|jogos\/\d+\/convocados)$/;
 
 publico.use("*", (c, next) => (ROTA_IMAGEM.test(c.req.path) ? limiteImagens(c, next) : limiteDados(c, next)));
 
@@ -85,4 +88,22 @@ publico.get("/jogadores/:id/foto", async (c) => {
   const foto = await obterFotoJogador(c.env.DB, id);
   if (!foto) return c.json({ erro: "Não encontrado" }, 404);
   return c.body(descodificarWebp(foto), 200, CABECALHOS_IMAGEM);
+});
+
+// Escudo de um adversário, pelo nome (?nome=FNB). 404 se ainda não tiver escudo: a página mostra as iniciais.
+publico.get("/adversarios/escudo", async (c) => {
+  const chave = chaveAdversario(c.req.query("nome") ?? "");
+  if (!chave || chave.length > 80) return c.json({ erro: "Pedido inválido" }, 400);
+  const escudo = await obterEscudoAdversario(c.env.DB, chave);
+  if (!escudo) return c.json({ erro: "Não encontrado" }, 404);
+  return c.body(descodificarWebp(escudo), 200, { ...CABECALHOS_IMAGEM, "Cache-Control": "public, max-age=300" });
+});
+
+// Imagem dos convocados que o gestor publicou. O endereço leva ?v=versão, por isso a cache pode ser longa.
+publico.get("/jogos/:id/convocados", async (c) => {
+  const id = Number(c.req.param("id"));
+  if (!Number.isInteger(id) || id <= 0) return c.json({ erro: "Pedido inválido" }, 400);
+  const imagem = await obterImagemConvocados(c.env.DB, id);
+  if (!imagem) return c.json({ erro: "Não encontrado" }, 404);
+  return c.body(descodificarWebp(imagem), 200, CABECALHOS_IMAGEM);
 });

@@ -112,6 +112,13 @@ export async function servirPagina(c: Context<Ambiente>): Promise<Response> {
 
   return new HTMLRewriter()
     .on("title", { element: (e) => void e.setInnerContent(tituloTexto) })
+    // Favicon: o escudo configurado no painel (ou o escudo por omissão do index.html).
+    .on('link[rel="icon"], link[rel="apple-touch-icon"]', {
+      element: (e) => {
+        e.setAttribute("href", imagem);
+        e.removeAttribute("type");
+      },
+    })
     .on("head", { element: (e) => void e.append(`\n    ${tags}\n  `, { html: true }) })
     .transform(resposta);
 }

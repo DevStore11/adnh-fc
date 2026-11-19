@@ -72,7 +72,9 @@ export default function Jogo() {
   if (!dados || !conjunto) return null;
 
   const { jogo, clube, onze, convocados, homemDoJogo, eventos } = dados;
-  const publicadas = ORDEM.filter((tipo) => conjunto[tipo].dados);
+  // Com a imagem dos convocados publicada pelo gestor, mostra-se essa em vez de gerar outra no navegador.
+  const imagemConvocados = convocados ? dados.convocadosImagemUrl : null;
+  const publicadas = ORDEM.filter((tipo) => conjunto[tipo].dados && !(tipo === "convocados" && imagemConvocados));
   const homem = homemDoJogo
     ? {
         ...homemDoJogo.jogador,
@@ -140,6 +142,23 @@ export default function Jogo() {
 
       {convocados && (
         <Secao antetitulo={`Convocatória · ${convocados.length} jogadores`}>
+          {imagemConvocados && (
+            <figure className="convocatoria__imagem">
+              <img
+                src={imagemConvocados}
+                alt={`Convocados para ${nomeClube} vs ${jogo.adversario}`}
+                width={1080}
+                height={1350}
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                <a className="botao botao--secundario" href={imagemConvocados} download={`convocados-jogo-${jogo.id}.webp`}>
+                  Descarregar imagem
+                </a>
+              </figcaption>
+            </figure>
+          )}
           {grupos.map((grupo) => (
             <div key={grupo.posicao} className="convocatoria">
               <h3 className="convocatoria__titulo">{tituloGrupo(grupo.posicao)}</h3>

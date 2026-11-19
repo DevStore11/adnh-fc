@@ -23,6 +23,8 @@
 - Excepção deste âmbito: foto do jogador em círculo, e nome em pílula (raio total), só dentro do círculo de jogador
 ### Botões e cards
 - Reutilizar os componentes existentes do clube.pen (convocatória, escalação, modal destrutivo)
+- [NOVO] Selo de número (Home e Plantel): bloco marinho (texto), raio 2, sem sombra, colado ao canto inferior esquerdo da foto do jogador, sobreposto à foto; número em Big Shoulders 900 preenchido, a neon. Medidas confirmadas: 56x48 com número a 32 px (telemóvel), 72x60 com número a 44 px (desktop). Substitui o número gigante em contorno atrás da foto. O contraste do número não depende da foto, porque o fundo é o selo.
+- [NOVO] Botão de contorno (o do "Contactar a direcção") reutilizado em "Adicionar ao calendário"
 
 ## 3. Parâmetros de gosto (propostas)
 - Variância 4/10 · Movimento 3/10 · Densidade 6/10 · Estilo base: Editorial desportivo (o do clube.pen)
@@ -34,9 +36,11 @@
 4. Estados do editor
 5. Imagem de partilha do onze, 1080x1350
 6. Página pública do jogo (04 Detalhe do jogo) com o onze em fotos
+7. [NOVO] Home (01): painel "Homem do jogo" com selo de número e estatísticas em número grande; bloco "Melhores marcadores" (top 3); "Próximo jogo" com contagem e "Adicionar ao calendário"
+8. [NOVO] Plantel (02): cartas com selo de número (e a mesma regra no perfil do jogador)
 
 ## 5. Animações
-Nenhuma 3D nem Lottie. Única transição: lista de escolha, 200 ms, desligada com movimento reduzido.
+Nenhuma 3D nem Lottie. Única transição: lista de escolha, 200 ms, desligada com movimento reduzido. [NOVO] A contagem do próximo jogo não é animada.
 
 ## 6. Orçamento e dispositivos
 - Prioridade: telemóvel (390 px, como os frames existentes), dados móveis
@@ -58,6 +62,13 @@ Nenhuma 3D nem Lottie. Única transição: lista de escolha, 200 ms, desligada c
 - [ ] Tamanhos do círculo: campo telemóvel 52-56, campo computador 72-80, lista 44, partilha 104, página pública 64
 - [ ] Imagem de partilha 1080x1350, sem texto cortado
 - [ ] Nada por arrastar: o único gesto é tocar
+- [ ] [NOVO] Selo de número: o número lê-se completo com 1 e 2 dígitos (10, 11, 12, 14, 15, 17 no Plantel), nunca cortado nem coberto pela foto
+- [ ] [NOVO] Número sempre em selo marinho com neon (nunca neon sobre fundo claro nem número directamente sobre foto)
+- [ ] [NOVO] O selo não tapa a cara do jogador (fica no canto inferior esquerdo)
+- [ ] [NOVO] Painel "Homem do jogo": golos e assistências em número grande, legíveis sem esforço a 390 px
+- [ ] [NOVO] "Melhores marcadores": top 3 por golos, desempate por assistências; linhas >= 48 px, toda a linha tocável; estados: menos de 3, sem golos, apelido longo
+- [ ] [NOVO] "Próximo jogo": estados da contagem (faltam N dias, amanhã, hoje às 15:30) e caso sem próximo jogo; botão "Adicionar ao calendário" com alvo >= 44 px
+- [ ] [NOVO] Desktop: coluna direita da Home sem vazio grande por baixo do "Próximo jogo"
 
 ## 8. Decisões registadas
 - 2026-11-07 — Escolher o onze por toque, sem arrastar — Emerson
@@ -69,3 +80,9 @@ Nenhuma 3D nem Lottie. Única transição: lista de escolha, 200 ms, desligada c
 - 2026-11-07, aceite por Emerson — H5 mantém o cabeçalho em cima e o campo a toda a largura, validado em 3-5-2
 - 2026-11-07, aceite por Emerson — Extremos de 4-3-3 contam como AVA (1 GR, 4 DEF, 3 MED, 3 AVA)
 - 2026-11-07, aceite por Emerson — O realce de selecção nunca é neon sobre fundo claro
+- [NOVO] 2026-11-19, aceite por Emerson — Home ganha "Melhores marcadores" (top 3) e, no "Próximo jogo", contagem e "Adicionar ao calendário"
+- [NOVO] 2026-11-19, aceite por Emerson — Número do jogador em selo marinho com neon sobre a foto, no lugar do contorno gigante; mesma regra no Plantel e no perfil do jogador (ainda sem frame de perfil público no clube.pen); estatísticas do painel "Homem do jogo" em número grande; medidas do selo confirmadas: 56x48 com 32 px (telemóvel) e 72x60 com 44 px (desktop)
+- [NOVO] 2026-11-19, aceite por Emerson — Com o selo, a foto do jogador ocupa a largura toda da carta (Home e Plantel), deixando de ser 3:4
+- [NOVO] 2026-11-19, aceite por Emerson — "Melhores marcadores": linha com apelido em maiúsculas, golos e assistências em Big Shoulders 900 (32 px no telemóvel, 40 px no desktop), seta "›", altura 56 px (telemóvel) e 64 px (desktop); apelido longo quebra em 2 linhas no telemóvel; estado vazio "Ainda ninguém marcou esta época."
+- [NOVO] 2026-11-19, aceite por Emerson — Contagem do "Próximo jogo" em selo marinho com texto neon ("FALTAM N DIAS", "AMANHÃ", "HOJE ÀS 15:30"); sem próximo jogo, contagem e botão escondem-se e aparece "Ainda não há jogo marcado."
+- [NOVO] 2026-11-19 — Fora desta fase: classificação na liga (o modelo de dados não tem tabela classificativa) e faixa de resumo da época

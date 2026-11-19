@@ -22,15 +22,12 @@
 	},
 	"d1_databases": [
 		{
-	 "binding": "DB",
-    "database_name": "adnh-fc-db",
-    "database_id": "a6f10407-b71d-4cfb-9576-525dd850ec6c",
-    "migrations_dir": "../../migrations"
-		},
-		{
-			"binding": "adnh_fc_db",
+			// "remote": true faz o "wrangler dev" usar a D1 de produção (não existe base local).
+			// O "wrangler deploy" ignora este campo.
+			"binding": "DB",
 			"database_name": "adnh-fc-db",
 			"database_id": "a6f10407-b71d-4cfb-9576-525dd850ec6c",
+			"migrations_dir": "../../migrations",
 			"remote": true
 		}
 	]

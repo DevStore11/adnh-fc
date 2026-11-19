@@ -4,14 +4,18 @@ import {
   convocatoriaEntradaSchema,
   escalacaoEntradaSchema,
   eventoEntradaSchema,
+  imagemConvocadosEntradaSchema,
+  LIMITE_IMAGEM_CONVOCADOS_BYTES,
   resultadoEntradaSchema,
   versaoEntradaSchema,
   type AccaoAuditoria,
   type JogoDetalhe,
 } from "@adnh-fc/shared";
+import { instrucaoGuardarImagemConvocados, instrucaoRetirarImagemConvocados } from "../db/queries/imagem-convocados";
 import type { Ambiente } from "../db/schema";
 import { instrucaoAuditoria } from "../lib/auditoria";
 import { obterIp } from "../lib/ip";
+import { ehWebpValido, textoLimite } from "../services/fotos";
 import { montarDetalhe } from "../services/jogo-detalhe";
 
 // Rotas de gestão de um jogo, montadas em /api/painel/jogos. Usam a sessão e o papel do router do painel.
@@ -127,10 +131,16 @@ painelJogo.put("/:id/convocatoria", async (c) => {
   if (retirados.some((j) => j.titular)) colunas.escalacao_publicada = 0;
   if (retirados.some((j) => j.id === detalhe.jogo.mvpPlayerId)) colunas.mvp_player_id = null;
 
+  // A imagem publicada é um retrato da convocatória: se esta mudar ou deixar de ser pública, a imagem sai.
+  const anteriores = detalhe.jogadores.filter((j) => j.convocado).map((j) => j.id);
+  const mudou = anteriores.length !== jogadores.length || anteriores.some((jogadorId) => !jogadores.includes(jogadorId));
+  const retirarImagem = detalhe.jogo.convocadosImagemPublicada && (mudou || !publicada);
+
   return concluir(c, id, versao, {
     accao: "jogo_convocatoria",
     colunas,
     instrucoes: [
+      ...(retirarImagem ? [instrucaoRetirarImagemConvocados(db, id)] : []),
       ...jogadores.map((jogadorId) =>
         db
           .prepare(
@@ -286,4 +296,42 @@ painelJogo.delete("/:id/eventos/:eventoId", async (c) => {
         : []),
     ],
   });
+});
+
+// Imagem dos convocados (1080x1350, WebP) gerada no painel e publicada no jogo.
+// Não usa a versão do jogo: é um ficheiro à parte e substituí-lo não altera mais nada.
+async function auditarImagem(c: Context<Ambiente>, id: number) {
+  return instrucaoAuditoria(c.env.DB, {
+    userId: c.get("utilizador").id,
+    accao: "jogo_imagem_convocados",
+    entidade: "jogo",
+    entidadeId: id,
+    ip: obterIp(c),
+  });
+}
+
+painelJogo.put("/:id/imagem-convocados", async (c) => {
+  const id = lerId(c.req.param("id"));
+  const corpo = imagemConvocadosEntradaSchema.safeParse(await lerCorpo(c));
+  if (!corpo.success) throw new HTTPException(400, { message: "Dados inválidos" });
+  const db = c.env.DB;
+  const detalhe = await obterDetalheOu404(db, id);
+  if (!detalhe.jogo.convocatoriaPublicada) {
+    throw new HTTPException(409, { message: "Publique primeiro a convocatória" });
+  }
+  if (!ehWebpValido(corpo.data.imagem, LIMITE_IMAGEM_CONVOCADOS_BYTES)) {
+    throw new HTTPException(400, {
+      message: `A imagem tem de ser WebP até ${textoLimite(LIMITE_IMAGEM_CONVOCADOS_BYTES)}`,
+    });
+  }
+  await db.batch([instrucaoGuardarImagemConvocados(db, id, corpo.data.imagem), await auditarImagem(c, id)]);
+  return c.json({ publicada: true });
+});
+
+painelJogo.delete("/:id/imagem-convocados", async (c) => {
+  const id = lerId(c.req.param("id"));
+  const db = c.env.DB;
+  await obterDetalheOu404(db, id);
+  await db.batch([instrucaoRetirarImagemConvocados(db, id), await auditarImagem(c, id)]);
+  return c.json({ publicada: false });
 });

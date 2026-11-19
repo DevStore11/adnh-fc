@@ -6,6 +6,8 @@ import type {
   conflitoJogoSchema,
   convocatoriaEntradaSchema,
   escalacaoEntradaSchema,
+  escudoAdversarioEntradaSchema,
+  imagemConvocadosEntradaSchema,
   eventoEntradaSchema,
   jogoDetalheSchema,
   resultadoEntradaSchema,
@@ -39,6 +41,7 @@ import type {
   inicioSchema,
   jogadorNoCampoSchema,
   jogadorPlantelSchema,
+  melhorMarcadorSchema,
   plantelSchema,
   proximoJogoSchema,
   resultadoRecenteSchema,
@@ -59,6 +62,7 @@ export type HomemDoJogo = z.infer<typeof homemDoJogoSchema>;
 export type JogadorNoCampo = z.infer<typeof jogadorNoCampoSchema>;
 export type UltimoJogo = z.infer<typeof ultimoJogoSchema>;
 export type ResultadoRecente = z.infer<typeof resultadoRecenteSchema>;
+export type MelhorMarcador = z.infer<typeof melhorMarcadorSchema>;
 export type Inicio = z.infer<typeof inicioSchema>;
 export type JogadorPlantel = z.infer<typeof jogadorPlantelSchema>;
 export type Plantel = z.infer<typeof plantelSchema>;
@@ -73,6 +77,8 @@ export type ActualizarGestorEntrada = z.infer<typeof actualizarGestorEntradaSche
 export type GestorComSenha = z.infer<typeof gestorComSenhaSchema>;
 export type GestorActualizado = z.infer<typeof gestorActualizadoSchema>;
 export type ClubeAdmin = z.infer<typeof clubeAdminSchema>;
+export type EscudoAdversarioEntrada = z.infer<typeof escudoAdversarioEntradaSchema>;
+export type ImagemConvocadosEntrada = z.infer<typeof imagemConvocadosEntradaSchema>;
 export type ClubeAdminEntrada = z.infer<typeof clubeAdminEntradaSchema>;
 export type AccaoAuditoria = (typeof ACCOES_AUDITORIA)[number];
 export type RegistoActividade = z.infer<typeof registoActividadeSchema>;

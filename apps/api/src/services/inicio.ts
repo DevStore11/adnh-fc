@@ -4,6 +4,7 @@ import { obterClube } from "../db/queries/clube";
 import { obterGolosSofridos } from "../db/queries/golos-sofridos";
 import { obterHomemDoJogo } from "../db/queries/homem-do-jogo";
 import { obterMarcadores } from "../db/queries/marcadores";
+import { obterMelhoresMarcadores } from "../db/queries/melhores-marcadores";
 import { obterOnzeInicial } from "../db/queries/onze-inicial";
 import { obterProximoJogo } from "../db/queries/proximo-jogo";
 import { obterSuplentes } from "../db/queries/suplentes";
@@ -11,6 +12,7 @@ import { obterUltimoJogo } from "../db/queries/ultimo-jogo";
 import { obterUltimosResultados } from "../db/queries/ultimos-resultados";
 
 const RESULTADOS_RECENTES = 5;
+const MELHORES_MARCADORES = 3;
 
 function resultadoDe(jogo: LinhaJogoTerminado): Resultado {
   if (jogo.golos_pro > jogo.golos_contra) return "V";
@@ -48,7 +50,11 @@ async function montarUltimoJogo(db: D1Database, jogo: LinhaJogoTerminado): Promi
 
   const onzeInicial = onze.flatMap((jogador) => {
     const posicao = lerPosicao(jogador.posicao_campo);
-    return posicao ? [{ id: jogador.id, nome: jogador.nome, numero: jogador.numero, ...posicao }] : [];
+    if (!posicao) return [];
+    const fotoUrl = jogador.foto_versao
+      ? `/api/publico/jogadores/${jogador.id}/foto?v=${encodeURIComponent(jogador.foto_versao)}`
+      : null;
+    return [{ id: jogador.id, nome: jogador.nome, numero: jogador.numero, fotoUrl, ...posicao }];
   });
 
   return {
@@ -83,10 +89,11 @@ export async function montarInicio(db: D1Database): Promise<Inicio | null> {
   const clube = await obterClube(db);
   if (!clube) return null;
 
-  const [proximo, ultimo, recentes] = await Promise.all([
+  const [proximo, ultimo, recentes, marcadores] = await Promise.all([
     obterProximoJogo(db, clube.epoca_actual),
     obterUltimoJogo(db, clube.epoca_actual),
     obterUltimosResultados(db, clube.epoca_actual, RESULTADOS_RECENTES),
+    obterMelhoresMarcadores(db, clube.epoca_actual, MELHORES_MARCADORES),
   ]);
 
   return {
@@ -98,6 +105,7 @@ export async function montarInicio(db: D1Database): Promise<Inicio | null> {
       epocaActual: clube.epoca_actual,
     },
     proximoJogo: proximo,
+    melhoresMarcadores: marcadores,
     ultimoJogo: ultimo ? await montarUltimoJogo(db, ultimo) : null,
     ultimosResultados: recentes.map((jogo) => ({
       id: jogo.id,

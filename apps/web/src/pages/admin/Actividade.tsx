@@ -23,6 +23,7 @@ const ROTULOS_ACCAO: Record<string, string> = {
   jogo_actualizado: "Alterou jogo",
   jogo_apagado: "Apagou jogo",
   jogo_convocatoria: "Alterou a convocatória",
+  jogo_imagem_convocados: "Alterou a imagem dos convocados",
   jogo_escalacao: "Alterou a escalação",
   jogo_resultado: "Registou o resultado",
   jogo_evento_registado: "Registou um evento",

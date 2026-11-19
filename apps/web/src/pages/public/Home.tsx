@@ -2,6 +2,7 @@ import { useInicio } from "../../app/InicioContexto";
 import { CampoOnze } from "../../components/campo/CampoOnze";
 import { HomemDoJogo } from "../../components/cartoes/HomemDoJogo";
 import { Manchete } from "../../components/cartoes/Manchete";
+import { MelhoresMarcadores } from "../../components/cartoes/MelhoresMarcadores";
 import { ProximoJogo } from "../../components/cartoes/ProximoJogo";
 import { UltimosResultados } from "../../components/cartoes/UltimosResultados";
 import { Carregando, ErroCarregar, SemDados } from "../../components/ui/Estados";
@@ -23,21 +24,19 @@ export default function Home() {
     );
   }
 
-  const { clube, proximoJogo, ultimoJogo, ultimosResultados } = estado.dados;
+  const { clube, proximoJogo, melhoresMarcadores, ultimoJogo, ultimosResultados } = estado.dados;
   if (!proximoJogo && !ultimoJogo && ultimosResultados.length === 0) return <SemDados />;
 
   const nomeClube = dividirNomeClube(clube.nome).principal;
   const onze = ultimoJogo?.onzeInicial ?? [];
   const homem = ultimoJogo?.homemDoJogo ?? null;
-  const temColunaDireita = homem !== null || proximoJogo !== null;
   const temColunaEsquerda = onze.length > 0;
 
   return (
     <>
       {ultimoJogo && <Manchete jogo={ultimoJogo} nomeClube={nomeClube} escudoUrl={clube.escudoUrl} />}
 
-      {(temColunaEsquerda || temColunaDireita) && (
-        <div className={`home-grade${temColunaEsquerda && temColunaDireita ? " home-grade--duas" : ""}`}>
+      <div className={`home-grade${temColunaEsquerda ? " home-grade--duas" : ""}`}>
           {ultimoJogo && temColunaEsquerda && (
             <Secao
               antetitulo={`Onze inicial${ultimoJogo.formacao ? ` · ${ultimoJogo.formacao}` : ""} · vs ${ultimoJogo.adversario}`}
@@ -50,14 +49,12 @@ export default function Home() {
               )}
             </Secao>
           )}
-          {temColunaDireita && (
-            <div className="home-grade__coluna">
-              {homem && <HomemDoJogo homem={homem} />}
-              {proximoJogo && <ProximoJogo jogo={proximoJogo} nomeClube={nomeClube} />}
-            </div>
-          )}
+          <div className="home-grade__coluna">
+            {homem && <HomemDoJogo homem={homem} />}
+            <ProximoJogo jogo={proximoJogo} nomeClube={nomeClube} />
+            <MelhoresMarcadores marcadores={melhoresMarcadores} />
+          </div>
         </div>
-      )}
 
       {ultimosResultados.length > 0 && <UltimosResultados resultados={ultimosResultados} />}
     </>

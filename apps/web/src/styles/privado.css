@@ -170,6 +170,13 @@
   color: var(--cor-papel);
 }
 
+.acesso__logo {
+  display: block;
+  width: clamp(110px, 32vw, 160px);
+  height: auto;
+  margin-bottom: var(--esp-4);
+}
+
 .acesso__antetitulo {
   color: var(--cor-secundaria);
   font-size: 12px;
@@ -239,6 +246,11 @@
 
   .acesso__marca {
     font-size: 96px;
+  }
+
+  .acesso__logo {
+    width: clamp(200px, 22vw, 280px);
+    margin-bottom: var(--esp-6);
   }
 
   .acesso__conteudo {
@@ -608,4 +620,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--esp-3);
+}
+
+.imagens__publicar {
+  margin-top: var(--esp-5);
+  padding-top: var(--esp-4);
+  border-top: 1px solid var(--cor-regua);
 }

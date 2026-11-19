@@ -22,6 +22,7 @@ export const ACCOES_AUDITORIA = [
   "jogo_actualizado",
   "jogo_apagado",
   "jogo_convocatoria",
+  "jogo_imagem_convocados",
   "jogo_escalacao",
   "jogo_resultado",
   "jogo_evento_registado",
@@ -34,6 +35,7 @@ export const LIMITE_ORIGINAL_IMAGEM_BYTES = 15 * 1024 * 1024;
 export const LIMITE_ESCUDO_BYTES = 200 * 1024;
 export const SENHA_TAMANHO_MINIMO = 10;
 export const LIMITE_FOTO_BYTES = 150 * 1024;
+export const LIMITE_IMAGEM_CONVOCADOS_BYTES = 700 * 1024;
 export const CONVOCADOS_MINIMO = 11;
 export const CONVOCADOS_MAXIMO = 22;
 export const TITULARES = 11;

@@ -5,8 +5,6 @@
   "scripts": {
     "dev": "pnpm --parallel --filter @adnh-fc/web --filter @adnh-fc/api dev",
     "build": "pnpm --filter @adnh-fc/web build",
-    "db:migrar:local": "pnpm --filter @adnh-fc/api exec wrangler d1 migrations apply adnh-fc-db --local",
-    "db:seed:local": "pnpm --filter @adnh-fc/api exec wrangler d1 execute adnh-fc-db --local --file=../../seeds/dev.sql",
     "admin:criar": "node scripts/admin-criar.mjs",
     "db:migrar:remoto": "pnpm --filter @adnh-fc/api exec wrangler d1 migrations apply adnh-fc-db --remote",
     "db:backup": "node scripts/db-backup.mjs",

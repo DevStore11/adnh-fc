@@ -195,3 +195,54 @@ export function sigla(nome: string): string {
     .join("")
     .slice(0, 3);
 }
+
+// Dia civil em Maputo (AAAA-MM-DD), para contar dias sem depender da hora do jogo.
+function diaEmMaputo(data: Date): number {
+  const [ano, mes, dia] = new Intl.DateTimeFormat("en-CA", { timeZone: FUSO }).format(data).split("-").map(Number);
+  return Date.UTC(ano, mes - 1, dia);
+}
+
+// "Faltam 3 dias", "Amanhã" ou "Hoje às 15:30". Devolve null se o jogo já passou.
+export function contagemJogo(iso: string, agora: Date = new Date()): string | null {
+  const jogo = new Date(iso);
+  const dias = Math.round((diaEmMaputo(jogo) - diaEmMaputo(agora)) / 86_400_000);
+  if (dias < 0) return null;
+  if (dias === 0) return jogo.getTime() < agora.getTime() ? null : `Hoje às ${formatarHora(iso)}`;
+  if (dias === 1) return "Amanhã";
+  return `Faltam ${dias} dias`;
+}
+
+const DURACAO_JOGO_MS = 2 * 60 * 60 * 1000;
+
+function dataIcs(data: Date): string {
+  return data.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+}
+
+function textoIcs(texto: string): string {
+  return texto
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\r?\n/g, "\\n");
+}
+
+// Ficheiro .ics com o jogo (duração assumida de 2 horas).
+export function criarCalendarioIcs(jogo: { id: number; data: string; local: string; competicao: string }, titulo: string): string {
+  const inicio = new Date(jogo.data);
+  const linhas = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//ADNH-FC//Calendario//PT",
+    "BEGIN:VEVENT",
+    `UID:jogo-${jogo.id}@adnh-fc`,
+    `DTSTAMP:${dataIcs(new Date())}`,
+    `DTSTART:${dataIcs(inicio)}`,
+    `DTEND:${dataIcs(new Date(inicio.getTime() + DURACAO_JOGO_MS))}`,
+    `SUMMARY:${textoIcs(titulo)}`,
+    `LOCATION:${textoIcs(jogo.local)}`,
+    `DESCRIPTION:${textoIcs(jogo.competicao)}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ];
+  return `${linhas.join("\r\n")}\r\n`;
+}

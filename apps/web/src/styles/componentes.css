@@ -232,6 +232,23 @@
   font-size: 40px;
 }
 
+.distintivo-adversario--escudo {
+  border-color: transparent;
+}
+
+.distintivo-adversario--escudo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.distintivo-adversario--pequeno {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+  flex: none;
+}
+
 /* Campo táctico */
 .campo {
   position: relative;
@@ -439,22 +456,44 @@
   gap: var(--esp-4);
 }
 
-.homem__numero {
-  color: transparent;
-  font-family: var(--fonte-titulo);
-  font-weight: 900;
-  font-size: 140px;
-  line-height: 0.85;
-  -webkit-text-stroke: 1.5px var(--cor-texto);
+.homem__cromo {
+  flex: none;
+  width: 150px;
 }
 
-.homem__foto {
-  flex: none;
+.homem__cromo .homem__posicao {
+  margin-top: var(--esp-3);
+}
+
+/* Selo de número: bloco marinho no canto inferior esquerdo da foto (ver .selo-numero) */
+.selo-numero {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 96px;
-  height: 128px;
+  width: 56px;
+  height: 48px;
+  border-radius: var(--raio);
+  background: var(--cor-texto);
+  color: var(--cor-secundaria);
+  font-family: var(--fonte-titulo);
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.homem__foto {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
   background: var(--cor-foto);
   color: var(--cor-texto-2);
   font-family: var(--fonte-titulo);
@@ -473,12 +512,38 @@
   min-width: 0;
 }
 
-.homem__titulo {
+.homem__estatisticas {
+  display: flex;
+  gap: var(--esp-5);
+  margin: 0;
+}
+
+/* O rótulo vem primeiro no HTML (dt) mas lê-se por baixo do número. */
+.homem__estatistica {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+}
+
+.homem__valor {
+  margin: 0;
   font-family: var(--fonte-titulo);
-  font-weight: 800;
-  font-size: 32px;
+  font-weight: 900;
+  font-size: 56px;
   line-height: 1;
+}
+
+.homem__rotulo {
+  margin-top: var(--esp-1);
+  color: var(--cor-texto-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.homem__rotulo--golos {
+  color: var(--cor-verde-campo);
 }
 
 .homem__descricao {
@@ -511,6 +576,51 @@
 }
 
 /* Próximo jogo */
+.proximo__contagem {
+  display: inline-block;
+  margin: 0 0 var(--esp-3);
+  padding: 6px 12px;
+  border-radius: var(--raio);
+  background: var(--cor-texto);
+  color: var(--cor-secundaria);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.proximo__vazio {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.botao-contorno {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: var(--esp-4);
+  padding: 14px var(--esp-5);
+  border: 1.5px solid var(--cor-texto);
+  border-radius: var(--raio);
+  background: transparent;
+  color: var(--cor-texto);
+  font: 600 14px var(--fonte-corpo);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.botao-contorno:hover {
+  background: var(--cor-texto);
+  color: var(--cor-papel);
+}
+
+.botao-contorno:focus-visible {
+  outline: 3px solid var(--cor-verde-campo);
+  outline-offset: 2px;
+}
+
 .proximo__data {
   font-family: var(--fonte-titulo);
   font-weight: 900;
@@ -529,6 +639,84 @@
   margin-top: var(--esp-2);
   color: var(--cor-texto-2);
   font-size: 13px;
+}
+
+/* Melhores marcadores */
+.marcadores,
+.marcadores__colunas {
+  --coluna-numero: 56px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.marcadores__colunas {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) var(--coluna-numero) var(--coluna-numero) 16px;
+  gap: var(--esp-3);
+  color: var(--cor-texto-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.marcadores__colunas span {
+  text-align: right;
+}
+
+.marcadores__colunas span:first-child {
+  grid-column: 3;
+}
+
+.marcadores__linha {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) var(--coluna-numero) var(--coluna-numero) 16px;
+  gap: var(--esp-3);
+  align-items: center;
+  min-height: 56px;
+  border-bottom: 1px solid var(--cor-regua);
+}
+
+.marcadores__posicao {
+  color: var(--cor-texto-2);
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.marcadores__nome {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.1;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.marcadores__numero {
+  font-family: var(--fonte-titulo);
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 1;
+  text-align: right;
+}
+
+.marcadores__seta {
+  color: var(--cor-texto-2);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.marcadores__vazio {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.marcadores__vazio-apoio {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-2);
+  font-size: 14px;
 }
 
 /* Últimos resultados */
@@ -679,23 +867,9 @@
   overflow: hidden;
 }
 
-.cartao-jogador__numero {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  color: transparent;
-  font-family: var(--fonte-titulo);
-  font-weight: 900;
-  font-size: 136px;
-  line-height: 1;
-  white-space: nowrap;
-  -webkit-text-stroke: 1.5px var(--cor-texto);
-}
-
 .cartao-jogador__foto {
   position: absolute;
-  inset: 0 0 0 30%;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -762,13 +936,13 @@
 /* Rodapé */
 .rodape {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--esp-2) var(--esp-4);
+  flex-direction: column;
+  gap: var(--esp-5);
   margin-top: var(--esp-8);
-  padding: var(--esp-5) 0 var(--esp-7);
-  border-top: 1px solid var(--cor-regua);
-  color: var(--cor-texto-2);
+  padding: var(--esp-5);
+  border-radius: var(--raio);
+  background: var(--cor-primaria);
+  color: var(--cor-papel);
   font-size: 13px;
 }
 
@@ -776,7 +950,70 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--cor-texto-2);
+  color: var(--cor-papel);
+  text-decoration: none;
+}
+
+.rodape a:hover {
+  text-decoration: underline;
+}
+
+.rodape__topo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.rodape__marca {
+  gap: var(--esp-4);
+}
+
+.rodape__escudo {
+  height: 40px;
+  width: auto;
+}
+
+.rodape__antetitulo {
+  display: block;
+  color: var(--cor-secundaria);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rodape__nome {
+  display: block;
+  font-family: var(--fonte-titulo);
+  font-weight: 900;
+  font-size: 26px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.rodape__nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.rodape__nav a {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rodape__base {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-4);
+  padding-top: var(--esp-4);
+  border-top: 1px solid color-mix(in srgb, var(--cor-papel) 25%, transparent);
+}
+
+.rodape__base p {
+  margin: 0;
 }
 
 @media (min-width: 900px) {
@@ -863,13 +1100,47 @@
     font-size: 120px;
   }
 
-  .homem__numero {
-    font-size: 170px;
+  .selo-numero {
+    width: 72px;
+    height: 60px;
+    font-size: 44px;
+  }
+
+  .homem__topo {
+    gap: var(--esp-5);
+  }
+
+  .homem__cromo {
+    width: 180px;
   }
 
   .homem__foto {
-    width: 126px;
     height: 168px;
+  }
+
+  .homem__estatisticas {
+    gap: var(--esp-6);
+  }
+
+  .homem__valor {
+    font-size: 72px;
+  }
+
+  .marcadores,
+  .marcadores__colunas {
+    --coluna-numero: 80px;
+  }
+
+  .marcadores__linha {
+    min-height: 64px;
+  }
+
+  .marcadores__nome {
+    font-size: 22px;
+  }
+
+  .marcadores__numero {
+    font-size: 40px;
   }
 
   .proximo__data {
@@ -903,5 +1174,28 @@
   .plantel__grade {
     grid-template-columns: repeat(auto-fill, 180px);
     gap: var(--esp-5);
+  }
+
+  .rodape {
+    padding: var(--esp-7) 56px var(--esp-6);
+  }
+
+  .rodape__topo {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .rodape__escudo {
+    height: 56px;
+  }
+
+  .rodape__nome {
+    font-size: 36px;
+  }
+
+  .rodape__nav {
+    display: flex;
+    gap: var(--esp-6);
   }
 }

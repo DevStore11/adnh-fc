@@ -13,10 +13,8 @@ Corre inteiro na Cloudflare: um Worker (Hono) serve a API em `/api/*` e o front-
 
 ## Scripts
 
-- `pnpm dev` — web e api em paralelo
+- `pnpm dev` — web e api em paralelo. **Usa a base D1 de produção** (binding `DB` com `remote: true`): o que gravares em dev aparece no site real. Corre `pnpm db:backup` antes de testar escritas
 - `pnpm build` — build do web
-- `pnpm db:migrar:local` — aplica migrações na D1 local
-- `pnpm db:seed:local` — carrega dados de exemplo na D1 local (nunca no remoto; não existe script que aplique o seed ao remoto)
 - `pnpm admin:criar` — cria o primeiro administrador na D1 local; com `--remoto` cria-o na D1 remota. Mostra a senha temporária uma única vez e recusa se já existir um admin
 - `pnpm db:migrar:remoto` — aplica migrações na D1 remota
 - `pnpm db:backup` — exporta a base remota para `backups/adnh-fc-AAAA-MM-DD.sql` (pasta ignorada pelo git)
@@ -70,8 +68,6 @@ Passos manuais, por ordem. Fazem-se na tua conta Cloudflare e nenhum é executad
    ```
    pnpm db:migrar:remoto
    ```
-
-   Nunca corras `seeds/dev.sql` no remoto: apaga dados e é só para desenvolvimento.
 
 5. **Criar o primeiro administrador** (a senha temporária aparece uma única vez; no primeiro acesso é obrigatório trocá-la)
 

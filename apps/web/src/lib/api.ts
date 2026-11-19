@@ -30,6 +30,8 @@ import {
   type JogadorPainel,
   type ConvocatoriaEntrada,
   type EscalacaoEntrada,
+  type EscudoAdversarioEntrada,
+  type ImagemConvocadosEntrada,
   type EventoEntrada,
   type JogadoresPainel,
   type JogoDetalhe,
@@ -283,4 +285,23 @@ export function registarEvento(id: number, dados: EventoEntrada): Promise<JogoDe
 
 export function apagarEvento(id: number, eventoId: number, versao: number): Promise<JogoDetalhe> {
   return pedir(`/painel/jogos/${id}/eventos/${eventoId}`, jogoDetalheSchema, { metodo: "DELETE", corpo: { versao } });
+}
+
+// Escudo do adversário e imagem dos convocados (aceitam qualquer objecto JSON de resposta)
+const respostaLivre = { safeParse: (dados: unknown) => ({ success: true as const, data: dados }) };
+
+export function urlEscudoAdversario(nome: string): string {
+  return `/api/publico/adversarios/escudo?nome=${encodeURIComponent(nome.trim())}`;
+}
+
+export async function guardarEscudoAdversario(dados: EscudoAdversarioEntrada): Promise<void> {
+  await pedir("/painel/adversarios/escudo", respostaLivre, { metodo: "PUT", corpo: dados });
+}
+
+export async function publicarImagemConvocados(id: number, dados: ImagemConvocadosEntrada): Promise<void> {
+  await pedir(`/painel/jogos/${id}/imagem-convocados`, respostaLivre, { metodo: "PUT", corpo: dados });
+}
+
+export async function retirarImagemConvocados(id: number): Promise<void> {
+  await pedir(`/painel/jogos/${id}/imagem-convocados`, respostaLivre, { metodo: "DELETE" });
 }

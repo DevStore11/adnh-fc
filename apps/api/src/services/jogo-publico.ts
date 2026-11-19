@@ -1,6 +1,7 @@
 import { jogoPublicoSchema, type JogoPublico } from "@adnh-fc/shared";
 import { obterClube } from "../db/queries/clube";
 import { listarEventos, listarJogadoresDoJogo, obterJogoCompleto } from "../db/queries/jogo-detalhe";
+import { obterVersaoImagemConvocados } from "../db/queries/imagem-convocados";
 import { listarEventosPublicos } from "../db/queries/publico-jogos";
 
 function lerPosicao(texto: string | null): { x: number; y: number } | null {
@@ -18,10 +19,11 @@ function lerPosicao(texto: string | null): { x: number; y: number } | null {
 export async function montarJogoPublico(db: D1Database, id: number): Promise<JogoPublico | null> {
   const [jogo, clube] = await Promise.all([obterJogoCompleto(db, id), obterClube(db)]);
   if (!jogo || !clube) return null;
-  const [jogadores, eventos, eventosPublicos] = await Promise.all([
+  const [jogadores, eventos, eventosPublicos, versaoImagem] = await Promise.all([
     listarJogadoresDoJogo(db, id),
     listarEventos(db, id),
     jogo.estado === "terminado" ? listarEventosPublicos(db, id) : Promise.resolve([]),
+    obterVersaoImagemConvocados(db, id),
   ]);
 
   const publico = (j: (typeof jogadores)[number]) => ({
@@ -80,6 +82,9 @@ export async function montarJogoPublico(db: D1Database, id: number): Promise<Jog
       golosContra: terminado ? jogo.golos_contra : null,
     },
     convocados,
+    // Só com a convocatória pública (ao retirá-la, a imagem também sai)
+    convocadosImagemUrl:
+      convocados && versaoImagem ? `/api/publico/jogos/${id}/convocados?v=${encodeURIComponent(versaoImagem)}` : null,
     onze,
     marcadores,
     eventos: eventosPublicos,
