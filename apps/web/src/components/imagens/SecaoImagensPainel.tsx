@@ -92,7 +92,7 @@ function PublicarConvocados({ detalhe, conjunto }: { detalhe: JogoDetalhe; conju
 
 // Imagens para partilhar, geradas no navegador. O escudo e as cores do clube vêm dos dados públicos do clube.
 export function SecaoImagensPainel({ detalhe, tipos, titulo = "Imagens para partilhar" }: Props) {
-  const { estado, recarregar } = usarPedido((sinal) => obterInicio(sinal));
+  const { estado, recarregar } = usarPedido((sinal) => obterInicio(undefined, sinal));
   const clube = estado.fase === "pronto" ? estado.dados.clube : null;
   const conjunto = useMemo(
     () => (clube ? imagensDoPainel(detalhe, clubeParaImagem(clube)) : null),

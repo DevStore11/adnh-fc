@@ -19,6 +19,12 @@ import type { ContextoJogo } from "../../lib/usar-jogo-painel";
 
 const FORMACAO_INICIAL: Formacao = "4-3-3";
 
+type PosicaoDoLugar = { x: number; y: number };
+
+function mesmaPosicao(a: PosicaoDoLugar, b: PosicaoDoLugar): boolean {
+  return Math.abs(a.x - b.x) < 1e-4 && Math.abs(a.y - b.y) < 1e-4;
+}
+
 function Conteudo({ contexto }: { contexto: ContextoJogo }) {
   const { detalhe, aOcupar, executar } = contexto;
   const { jogo } = detalhe;
@@ -26,23 +32,45 @@ function Conteudo({ contexto }: { contexto: ContextoJogo }) {
   const terminado = jogo.estado === "terminado";
 
   const [formacao, definirFormacao] = useState<Formacao>(jogo.formacao ?? FORMACAO_INICIAL);
-  // O onze é um jogador (id) por lugar da formação.
-  const [onze, definirOnze] = useState<OnzePorLugar>(() => {
-    const inicial = jogo.formacao ?? FORMACAO_INICIAL;
+  // O onze é um jogador (id) por lugar da formação; as posições de cada lugar podem ser personalizadas.
+  const [inicial] = useState<{ onze: OnzePorLugar; posicoes: PosicaoDoLugar[] | null }>(() => {
+    const base = jogo.formacao ?? FORMACAO_INICIAL;
+    const lugaresDaBase = lugaresDaFormacao(base);
     const guardados = detalhe.jogadores
       .filter((j) => j.titular && j.x !== null && j.y !== null)
       .map((j) => ({ id: j.id, x: j.x ?? 0.5, y: j.y ?? 0.5 }));
-    if (guardados.length > 0) return atribuirALugares(inicial, guardados);
+    if (guardados.length > 0) {
+      const onzeGuardado = atribuirALugares(base, guardados);
+      // Cada lugar fica onde o gestor o deixou; só há posições personalizadas se alguma difere da formação.
+      const posicoesGuardadas = lugaresDaBase.map((lugar) => {
+        const guardado = guardados.find((g) => g.id === onzeGuardado[lugar.indice]);
+        return guardado ? { x: guardado.x, y: guardado.y } : { x: lugar.x, y: lugar.y };
+      });
+      const personalizado = posicoesGuardadas.some((p, indice) => !mesmaPosicao(p, lugaresDaBase[indice]));
+      return { onze: onzeGuardado, posicoes: personalizado ? posicoesGuardadas : null };
+    }
     // Sem escalação guardada, propõe-se um onze que encaixe na formação.
-    return convocados.length >= TITULARES
-      ? atribuirALugares(inicial, distribuir(inicial, sugerirOnze(inicial, convocados)))
-      : lugaresDaFormacao(inicial).map(() => null);
+    return {
+      onze:
+        convocados.length >= TITULARES
+          ? atribuirALugares(base, distribuir(base, sugerirOnze(base, convocados)))
+          : lugaresDaBase.map(() => null),
+      posicoes: null,
+    };
   });
+  const [onze, definirOnze] = useState<OnzePorLugar>(inicial.onze);
+  // null = posições da formação; senão, uma posição (x, y) por lugar.
+  const [posicoes, definirPosicoes] = useState<PosicaoDoLugar[] | null>(inicial.posicoes);
+  const [mover, definirMover] = useState(false);
   const [lugarAberto, definirLugarAberto] = useState<number | null>(null);
   const gatilho = useRef<HTMLElement | null>(null);
   const painelLateral = usarPainelLateral();
 
-  const lugares = useMemo(() => lugaresDaFormacao(formacao), [formacao]);
+  const lugaresBase = useMemo(() => lugaresDaFormacao(formacao), [formacao]);
+  const lugares = useMemo(
+    () => (posicoes ? lugaresBase.map((lugar) => ({ ...lugar, ...posicoes[lugar.indice] })) : lugaresBase),
+    [lugaresBase, posicoes],
+  );
   const porId = new Map(detalhe.jogadores.map((j) => [j.id, j]));
   const idsNoOnze = onze.filter((id): id is number => id !== null);
   const suplentes = convocados.filter((j) => !idsNoOnze.includes(j.id));
@@ -56,7 +84,7 @@ function Conteudo({ contexto }: { contexto: ContextoJogo }) {
   }
 
   function abrir(indice: number, botao: HTMLButtonElement) {
-    if (terminado || aOcupar) return;
+    if (terminado || aOcupar || mover) return;
     gatilho.current = botao;
     definirLugarAberto(indice);
     if (!painelLateral) {
@@ -81,9 +109,23 @@ function Conteudo({ contexto }: { contexto: ContextoJogo }) {
     fechar();
   }
 
+  function moverLugar(indice: number, x: number, y: number) {
+    definirPosicoes((actuais) => {
+      const novas = actuais ?? lugaresBase.map((lugar) => ({ x: lugar.x, y: lugar.y }));
+      return novas.map((posicao, i) => (i === indice ? { x, y } : posicao));
+    });
+  }
+
+  function alternarMover() {
+    definirLugarAberto(null);
+    definirMover((activo) => !activo);
+  }
+
   function escolherFormacao(nova: Formacao) {
     definirFormacao(nova);
     definirLugarAberto(null);
+    // Uma formação nova volta às posições da formação.
+    definirPosicoes(null);
     if (idsNoOnze.length === 0 && convocados.length >= TITULARES) {
       definirOnze(atribuirALugares(nova, distribuir(nova, sugerirOnze(nova, convocados))));
       return;
@@ -177,9 +219,28 @@ function Conteudo({ contexto }: { contexto: ContextoJogo }) {
             </button>
           ))}
         </div>
+        <div className="formacoes__botoes">
+          <button
+            type="button"
+            className={`formacao${mover ? " formacao--activa" : ""}`}
+            aria-pressed={mover}
+            disabled={terminado || aOcupar}
+            onClick={alternarMover}
+          >
+            Mover jogadores
+          </button>
+          <button
+            type="button"
+            className="formacao"
+            disabled={terminado || aOcupar || posicoes === null}
+            onClick={() => definirPosicoes(null)}
+          >
+            Repor formação
+          </button>
+        </div>
       </div>
 
-      {terminado && <p className="jogo__apoio jogo__nota">Jogo terminado: a escalação já não pode ser alterada.</p>}
+      {terminado &&<p className="jogo__apoio jogo__nota">Jogo terminado: a escalação já não pode ser alterada.</p>}
 
       <div className="painel-grade painel-grade--campo">
         <div>
@@ -188,7 +249,9 @@ function Conteudo({ contexto }: { contexto: ContextoJogo }) {
             seleccionado={lugarAberto}
             escurecido={lugarAberto !== null && !painelLateral}
             bloqueado={terminado || aOcupar}
+            mover={mover}
             aoAbrir={abrir}
+            aoMover={moverLugar}
           />
           {!painelLateral && lista}
         </div>
@@ -263,7 +326,8 @@ function Conteudo({ contexto }: { contexto: ContextoJogo }) {
       </div>
 
       <p className="jogo__apoio jogo__nota">
-        Toque num lugar do campo para escolher ou trocar o jogador. Os lugares vazios têm +. Nada se arrasta.
+        Toque num lugar do campo para escolher ou trocar o jogador. Os lugares vazios têm +. Para mudar as posições,
+        ative "Mover jogadores" e arraste cada um (ou use as setas); "Repor formação" volta às posições da formação.
       </p>
 
       <SecaoImagensPainel detalhe={detalhe} tipos={["onze-inicial"]} />

@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { jogosPublicosConsultaSchema, jogosPublicosSchema, estatisticasSchema, jogadorPerfilSchema, inicioSchema, plantelSchema } from "@adnh-fc/shared";
+import { jogosPublicosConsultaSchema, jogosPublicosSchema, estatisticasSchema, jogadorPerfilSchema, inicioConsultaSchema, inicioSchema, plantelSchema } from "@adnh-fc/shared";
 import { obterEscudoAdversario } from "../db/queries/escudo-adversario";
 import { obterEscudoClube } from "../db/queries/escudo-clube";
 import { obterImagemConvocados } from "../db/queries/imagem-convocados";
@@ -26,7 +26,9 @@ const ROTA_IMAGEM = /\/(clube\/escudo|adversarios\/escudo|jogadores\/\d+\/foto|j
 publico.use("*", (c, next) => (ROTA_IMAGEM.test(c.req.path) ? limiteImagens(c, next) : limiteDados(c, next)));
 
 publico.get("/inicio", async (c) => {
-  const inicio = await montarInicio(c.env.DB);
+  const consulta = inicioConsultaSchema.safeParse(c.req.query());
+  if (!consulta.success) return c.json({ erro: "Pedido inválido" }, 400);
+  const inicio = await montarInicio(c.env.DB, consulta.data.epoca);
   if (!inicio) return c.json({ erro: "Sem dados" }, 404);
   c.header("Cache-Control", "public, max-age=30");
   return c.json(inicioSchema.parse(inicio));

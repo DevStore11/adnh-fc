@@ -101,6 +101,8 @@ export const melhorMarcadorSchema = z.object({
 
 export const inicioSchema = z.object({
   clube: clubePublicoSchema,
+  epoca: z.string(),
+  epocas: z.array(z.string()),
   proximoJogo: proximoJogoSchema.nullable(),
   melhoresMarcadores: z.array(melhorMarcadorSchema),
   ultimoJogo: ultimoJogoSchema.nullable(),
@@ -424,6 +426,8 @@ export const jogosPublicosConsultaSchema = z.object({
   competicao: z.string().trim().min(1).max(80).optional(),
   estado: z.enum(["agendado", "terminado"]).optional(),
 });
+
+export const inicioConsultaSchema = jogosPublicosConsultaSchema.pick({ epoca: true });
 
 export const jogoListaPublicoSchema = z.object({
   id: idSchema,

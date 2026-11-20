@@ -3,6 +3,7 @@ import {
   ajustarEmLinhas,
   ajustarFonte,
   carregarEscudo,
+  carregarEscudoAdversario,
   carregarImagem,
   criarTela,
   desenharCobrir,
@@ -214,8 +215,9 @@ export async function gerarOnzeInicial(dados: DadosOnzeInicial): Promise<HTMLCan
   await prepararFontes();
   const p = paleta(dados.clube);
   // As fotos carregam em paralelo; as que falharem ou demorarem mais de 10 s ficam a null e usam o círculo sem foto.
-  const [escudo, fotos] = await Promise.all([
+  const [escudo, escudoAdversario, fotos] = await Promise.all([
     carregarEscudo(dados.clube),
+    carregarEscudoAdversario(dados.adversario),
     Promise.all(dados.titulares.map((j: JogadorImagem) => carregarImagem(j.fotoUrl))),
   ]);
   const fotoDe = new Map(dados.titulares.map((j, indice) => [j.id, fotos[indice]]));
@@ -254,7 +256,10 @@ export async function gerarOnzeInicial(dados: DadosOnzeInicial): Promise<HTMLCan
   const xBloco = MARGEM + medir(ctx, formacao, ajusteFormacao.fonte) + 48;
   const larguraBloco = LARGURA - MARGEM - xBloco;
 
-  const vs = ajustarEmLinhas(ctx, maiusculas(`vs ${dados.adversario}`), larguraBloco, 2, 36, 24, 600);
+  // O escudo do adversário fica à direita do bloco; o texto "vs" usa o espaço que sobra.
+  const larguraEscudoAdversario = desenharEscudo(ctx, escudoAdversario, LARGURA - MARGEM, 204, 84, "direita");
+  const larguraVs = larguraBloco - (larguraEscudoAdversario > 0 ? larguraEscudoAdversario + 20 : 0);
+  const vs = ajustarEmLinhas(ctx, maiusculas(`vs ${dados.adversario}`), larguraVs, 2, 36, 24, 600);
   // A última linha do adversário fica sempre na mesma altura; se houver duas, a primeira sobe.
   let y = 290 - (vs.linhas.length - 1) * (vs.tamanho + 8);
   for (const linha of vs.linhas) {

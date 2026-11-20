@@ -126,8 +126,8 @@ export function obterPlantel(sinal?: AbortSignal): Promise<Plantel> {
   return pedir("/publico/plantel", plantelSchema, { sinal });
 }
 
-export function obterInicio(sinal?: AbortSignal): Promise<Inicio> {
-  return pedir("/publico/inicio", inicioSchema, { sinal });
+export function obterInicio(epoca?: string, sinal?: AbortSignal): Promise<Inicio> {
+  return pedir(`/publico/inicio${epoca ? `?epoca=${encodeURIComponent(epoca)}` : ""}`, inicioSchema, { sinal });
 }
 
 export function obterJogoPublico(id: number, sinal?: AbortSignal): Promise<JogoPublico> {

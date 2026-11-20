@@ -3,6 +3,7 @@ import {
   ajustarEmLinhas,
   ajustarFonte,
   carregarEscudo,
+  carregarEscudoAdversario,
   carregarImagem,
   criarTela,
   desenharCobrir,
@@ -69,7 +70,11 @@ function desenharPainel(
 export async function gerarHomemDoJogo(dados: DadosHomemDoJogo): Promise<HTMLCanvasElement> {
   await prepararFontes();
   const p = paleta(dados.clube);
-  const [escudo, foto] = await Promise.all([carregarEscudo(dados.clube), carregarImagem(dados.jogador.fotoUrl)]);
+  const [escudo, escudoAdversario, foto] = await Promise.all([
+    carregarEscudo(dados.clube),
+    carregarEscudoAdversario(dados.adversario),
+    carregarImagem(dados.jogador.fotoUrl),
+  ]);
   const { canvas, ctx } = criarTela(LARGURA, ALTURA_RETRATO);
   desenharFundo(ctx, LARGURA, ALTURA_RETRATO, p);
 
@@ -121,7 +126,9 @@ export async function gerarHomemDoJogo(dados: DadosHomemDoJogo): Promise<HTMLCan
   const topoRodape = PAINEL.y + PAINEL.altura + 54;
   const larguraEscudo = desenharEscudo(ctx, escudo, MARGEM, topoRodape, 150);
   const xTexto = MARGEM + (larguraEscudo > 0 ? larguraEscudo + 32 : 0);
-  const larguraTexto = LARGURA - MARGEM - xTexto;
+  // O escudo do adversário fica à direita do rodapé; o texto usa o espaço que sobra.
+  const larguraEscudoAdversario = desenharEscudo(ctx, escudoAdversario, LARGURA - MARGEM, topoRodape, 110, "direita");
+  const larguraTexto = LARGURA - MARGEM - xTexto - (larguraEscudoAdversario > 0 ? larguraEscudoAdversario + 24 : 0);
   const resultado = `${nomePrincipalClube(dados.clube.nome)} ${dados.golosPro} – ${dados.golosContra}`;
   const linhaResultado = ajustarFonte(ctx, resultado, larguraTexto, 46, 28, 600);
   escrever(ctx, resultado, xTexto, topoRodape + 46, { fonte: linhaResultado.fonte, cor: p.texto });

@@ -21,7 +21,7 @@ export function InicioProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const controlador = new AbortController();
     definirEstado({ fase: "carregando" });
-    obterInicio(controlador.signal).then(
+    obterInicio(undefined, controlador.signal).then(
       (dados) => definirEstado({ fase: "pronto", dados }),
       (erro: unknown) => {
         if (controlador.signal.aborted) return;

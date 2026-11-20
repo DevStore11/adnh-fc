@@ -10,6 +10,7 @@ import { obterProximoJogo } from "../db/queries/proximo-jogo";
 import { obterSuplentes } from "../db/queries/suplentes";
 import { obterUltimoJogo } from "../db/queries/ultimo-jogo";
 import { obterUltimosResultados } from "../db/queries/ultimos-resultados";
+import { juntarEpocaActual } from "./jogos-publicos";
 
 const RESULTADOS_RECENTES = 5;
 const MELHORES_MARCADORES = 3;
@@ -85,15 +86,18 @@ async function montarUltimoJogo(db: D1Database, jogo: LinhaJogoTerminado): Promi
   };
 }
 
-export async function montarInicio(db: D1Database): Promise<Inicio | null> {
+export async function montarInicio(db: D1Database, epocaPedida?: string): Promise<Inicio | null> {
   const clube = await obterClube(db);
   if (!clube) return null;
+  const epoca = epocaPedida ?? clube.epoca_actual;
 
-  const [proximo, ultimo, recentes, marcadores] = await Promise.all([
-    obterProximoJogo(db, clube.epoca_actual),
-    obterUltimoJogo(db, clube.epoca_actual),
-    obterUltimosResultados(db, clube.epoca_actual, RESULTADOS_RECENTES),
-    obterMelhoresMarcadores(db, clube.epoca_actual, MELHORES_MARCADORES),
+  const [epocas, proximo, ultimo, recentes, marcadores] = await Promise.all([
+    juntarEpocaActual(db, clube.epoca_actual),
+    // Sem época pedida, o próximo jogo é o mais próximo de todas as épocas: um jogo novo aparece sempre em destaque.
+    obterProximoJogo(db, epocaPedida ?? null),
+    obterUltimoJogo(db, epoca),
+    obterUltimosResultados(db, epoca, RESULTADOS_RECENTES),
+    obterMelhoresMarcadores(db, epoca, MELHORES_MARCADORES),
   ]);
 
   return {
@@ -104,6 +108,8 @@ export async function montarInicio(db: D1Database): Promise<Inicio | null> {
       corSecundaria: clube.cor_secundaria,
       epocaActual: clube.epoca_actual,
     },
+    epoca,
+    epocas,
     proximoJogo: proximo,
     melhoresMarcadores: marcadores,
     ultimoJogo: ultimo ? await montarUltimoJogo(db, ultimo) : null,

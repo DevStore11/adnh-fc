@@ -3,6 +3,7 @@ import {
   ajustarEmLinhas,
   ajustarFonte,
   carregarEscudo,
+  carregarEscudoAdversario,
   criarTela,
   desenharEscudo,
   desenharFundo,
@@ -78,7 +79,10 @@ export async function gerarPlacarFinal(dados: DadosPlacarFinal): Promise<HTMLCan
   await prepararFontes();
   const m = MEDIDAS[dados.formato ?? "retrato"];
   const p = paleta(dados.clube);
-  const escudo = await carregarEscudo(dados.clube);
+  const [escudo, escudoAdversario] = await Promise.all([
+    carregarEscudo(dados.clube),
+    carregarEscudoAdversario(dados.adversario),
+  ]);
   const { canvas, ctx } = criarTela(LARGURA, m.altura);
   desenharFundo(ctx, LARGURA, m.altura, p);
 
@@ -93,17 +97,22 @@ export async function gerarPlacarFinal(dados: DadosPlacarFinal): Promise<HTMLCan
   const lado = m.faixaAltura;
   const larguraEscudo = desenharEscudo(ctx, escudo, MARGEM, m.faixaY, lado);
   const xCaixa = LARGURA - MARGEM - lado;
-  ctx.strokeStyle = p.texto;
-  ctx.lineWidth = 4;
-  ctx.strokeRect(xCaixa + 2, m.faixaY + 2, lado - 4, lado - 4);
-  const siglaAdversario = maiusculas(sigla(dados.adversario) || dados.adversario.slice(0, 3));
-  const ajusteSigla = ajustarFonte(ctx, siglaAdversario, lado - 28, Math.round(lado * 0.5), 28, 900, FONTE_TITULO);
-  escrever(ctx, siglaAdversario, xCaixa + lado / 2, m.faixaY + lado / 2, {
-    fonte: ajusteSigla.fonte,
-    cor: p.texto,
-    alinhamento: "center",
-    base: "middle",
-  });
+  if (escudoAdversario) {
+    // Escudo do adversário, da mesma altura que o do clube e encostado à direita.
+    desenharEscudo(ctx, escudoAdversario, LARGURA - MARGEM, m.faixaY, lado, "direita");
+  } else {
+    ctx.strokeStyle = p.texto;
+    ctx.lineWidth = 4;
+    ctx.strokeRect(xCaixa + 2, m.faixaY + 2, lado - 4, lado - 4);
+    const siglaAdversario = maiusculas(sigla(dados.adversario) || dados.adversario.slice(0, 3));
+    const ajusteSigla = ajustarFonte(ctx, siglaAdversario, lado - 28, Math.round(lado * 0.5), 28, 900, FONTE_TITULO);
+    escrever(ctx, siglaAdversario, xCaixa + lado / 2, m.faixaY + lado / 2, {
+      fonte: ajusteSigla.fonte,
+      cor: p.texto,
+      alinhamento: "center",
+      base: "middle",
+    });
+  }
 
   const xPlacarIni = MARGEM + Math.max(larguraEscudo, lado * 0.6) + 16;
   const larguraPlacar = xCaixa - 16 - xPlacarIni;

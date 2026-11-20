@@ -3,6 +3,7 @@ import {
   ajustarEmLinhas,
   ajustarFonte,
   carregarEscudo,
+  carregarEscudoAdversario,
   carregarImagem,
   criarTela,
   desenharAvatar,
@@ -93,8 +94,9 @@ function desenharLinha(
 export async function gerarConvocados(dados: DadosConvocados): Promise<HTMLCanvasElement> {
   await prepararFontes();
   const p = paleta(dados.clube);
-  const [escudo, fotos] = await Promise.all([
+  const [escudo, escudoAdversario, fotos] = await Promise.all([
     carregarEscudo(dados.clube),
+    carregarEscudoAdversario(dados.adversario),
     Promise.all(dados.jogadores.map((j) => carregarImagem(j.fotoUrl))),
   ]);
   const fotoDe = new Map(dados.jogadores.map((j, indice) => [j.id, fotos[indice]]));
@@ -115,7 +117,10 @@ export async function gerarConvocados(dados: DadosConvocados): Promise<HTMLCanva
   escrever(ctx, nomeClube, xTexto, 64 + alturaEscudo - 6, { fonte: ajusteNome.fonte, cor: p.texto });
 
   // Adversário, data e local
-  const vs = ajustarEmLinhas(ctx, maiusculas(`vs ${dados.adversario}`), LARGURA - 2 * MARGEM, 2, 56, 30, 800, FONTE_TITULO);
+  // O escudo do adversário fica à direita; o texto "vs" usa o espaço que sobra.
+  const larguraEscudoAdversario = desenharEscudo(ctx, escudoAdversario, LARGURA - MARGEM, 204, 110, "direita");
+  const larguraVs = LARGURA - 2 * MARGEM - (larguraEscudoAdversario > 0 ? larguraEscudoAdversario + 24 : 0);
+  const vs = ajustarEmLinhas(ctx, maiusculas(`vs ${dados.adversario}`), larguraVs, 2, 56, 30, 800, FONTE_TITULO);
   let y = 290;
   for (const linha of vs.linhas) {
     escrever(ctx, linha, MARGEM, y, { fonte: vs.fonte, cor: p.texto });

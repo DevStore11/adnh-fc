@@ -61,7 +61,7 @@ Nenhuma 3D nem Lottie. Única transição: lista de escolha, 200 ms, desligada c
 - [ ] Lugar ocupado oferece trocar e "Retirar do onze" (modal destrutivo existente)
 - [ ] Tamanhos do círculo: campo telemóvel 52-56, campo computador 72-80, lista 44, partilha 104, página pública 64
 - [ ] Imagem de partilha 1080x1350, sem texto cortado
-- [ ] Nada por arrastar: o único gesto é tocar
+- [ ] Escolher o jogador é por toque; arrastar só existe no modo "Mover jogadores" (posições personalizadas)
 - [ ] [NOVO] Selo de número: o número lê-se completo com 1 e 2 dígitos (10, 11, 12, 14, 15, 17 no Plantel), nunca cortado nem coberto pela foto
 - [ ] [NOVO] Número sempre em selo marinho com neon (nunca neon sobre fundo claro nem número directamente sobre foto)
 - [ ] [NOVO] O selo não tapa a cara do jogador (fica no canto inferior esquerdo)
@@ -72,6 +72,7 @@ Nenhuma 3D nem Lottie. Única transição: lista de escolha, 200 ms, desligada c
 
 ## 8. Decisões registadas
 - 2026-11-07 — Escolher o onze por toque, sem arrastar — Emerson
+- 2026-11-19 — Posições personalizadas: modo "Mover jogadores" com arrasto (rato e toque) e setas, "Repor formação"; escolher o jogador continua por toque — Emerson
 - 2026-11-07 — Lista por posição, com "Outras posições" por baixo, sem esconder ninguém — proposta aceite por Emerson
 - 2026-11-07 — Só 1080x1350 (sem stories) e sem selo de capitão — proposta aceite por Emerson
 - 2026-11-07 — Foto redonda com número em disco escuro e nome em pílula, como a referência — Emerson

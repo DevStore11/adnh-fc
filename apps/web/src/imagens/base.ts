@@ -1,3 +1,4 @@
+import { urlEscudoAdversario } from "../lib/api";
 import { dividirNomeClube, formatarDataLonga, formatarHora, iniciais } from "../lib/formatadores";
 import type { ClubeImagem, JogoImagem } from "./tipos";
 
@@ -76,6 +77,11 @@ export function carregarImagem(url: string | null): Promise<HTMLImageElement | n
 
 export function carregarEscudo(clube: ClubeImagem): Promise<HTMLImageElement | null> {
   return carregarImagem(clube.escudoUrl ?? ESCUDO_RESERVA);
+}
+
+// Escudo do adversário (se o gestor o carregou). Sem escudo ou se falhar devolve null e quem desenha usa o texto.
+export function carregarEscudoAdversario(nome: string): Promise<HTMLImageElement | null> {
+  return carregarImagem(urlEscudoAdversario(nome));
 }
 
 export function criarTela(largura: number, altura: number): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D } {
